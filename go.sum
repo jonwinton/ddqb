@@ -1,0 +1,4 @@
+github.com/alecthomas/participle/v2 v2.1.4 h1:W/H79S8Sat/krZ3el6sQMvMaahJ+XcM9WSI2naI7w2U=
+github.com/alecthomas/participle/v2 v2.1.4/go.mod h1:8tqVbpTX20Ru4NfYQgZf4mP18eXPTBViyMWiArNEgGI=
+github.com/jonwinton/ddqp v0.0.0-20250608205026-d873cb1c4af5 h1:s/3RwKjHQ7dW0i3Up0IJPBTPwcAROVb7p0w03bUejbA=
+github.com/jonwinton/ddqp v0.0.0-20250608205026-d873cb1c4af5/go.mod h1:RAPr2e5Gs1gm8U94ATksrVf6gNyVz3x2KC3CCas2dtc=
