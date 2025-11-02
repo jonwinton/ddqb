@@ -13,10 +13,6 @@ const (
 	Equal FilterOperation = iota
 	// NotEqual represents a negated equality filter (key!:value).
 	NotEqual
-	// GreaterThan represents a greater than filter (key>value).
-	GreaterThan
-	// LessThan represents a less than filter (key<value).
-	LessThan
 	// Regex represents a regex filter (key:~value).
 	Regex
 	// In represents an IN filter.
@@ -32,12 +28,6 @@ type FilterBuilder interface {
 
 	// NotEqual creates a negated equality filter (key!:value).
 	NotEqual(value string) FilterBuilder
-
-	// GreaterThan creates a greater than filter (key>value).
-	GreaterThan(value string) FilterBuilder
-
-	// LessThan creates a less than filter (key<value).
-	LessThan(value string) FilterBuilder
 
 	// Regex creates a regex filter (key:~value).
 	Regex(pattern string) FilterBuilder
@@ -81,20 +71,6 @@ func (b *filterBuilder) NotEqual(value string) FilterBuilder {
 	return b
 }
 
-// GreaterThan creates a greater than filter (key>value).
-func (b *filterBuilder) GreaterThan(value string) FilterBuilder {
-	b.operation = GreaterThan
-	b.values = []string{value}
-	return b
-}
-
-// LessThan creates a less than filter (key<value).
-func (b *filterBuilder) LessThan(value string) FilterBuilder {
-	b.operation = LessThan
-	b.values = []string{value}
-	return b
-}
-
 // Regex creates a regex filter (key:~value).
 func (b *filterBuilder) Regex(pattern string) FilterBuilder {
 	b.operation = Regex
@@ -133,16 +109,6 @@ func (b *filterBuilder) Build() (string, error) {
 			return "", fmt.Errorf("not equal filter requires exactly one value")
 		}
 		return fmt.Sprintf("%s!:%s", b.key, b.values[0]), nil
-	case GreaterThan:
-		if len(b.values) != 1 {
-			return "", fmt.Errorf("greater than filter requires exactly one value")
-		}
-		return fmt.Sprintf("%s>%s", b.key, b.values[0]), nil
-	case LessThan:
-		if len(b.values) != 1 {
-			return "", fmt.Errorf("less than filter requires exactly one value")
-		}
-		return fmt.Sprintf("%s<%s", b.key, b.values[0]), nil
 	case Regex:
 		if len(b.values) != 1 {
 			return "", fmt.Errorf("regex filter requires exactly one pattern")
@@ -152,24 +118,15 @@ func (b *filterBuilder) Build() (string, error) {
 		if len(b.values) == 0 {
 			return "", fmt.Errorf("in filter requires at least one value")
 		}
-		valueList := strings.Join(quoteValues(b.values), ", ")
-		return fmt.Sprintf("%s IN [%s]", b.key, valueList), nil
+		valueList := strings.Join(b.values, ",")
+		return fmt.Sprintf("%s IN (%s)", b.key, valueList), nil
 	case NotIn:
 		if len(b.values) == 0 {
 			return "", fmt.Errorf("not in filter requires at least one value")
 		}
-		valueList := strings.Join(quoteValues(b.values), ", ")
-		return fmt.Sprintf("%s NOT IN [%s]", b.key, valueList), nil
+		valueList := strings.Join(b.values, ",")
+		return fmt.Sprintf("%s NOT IN (%s)", b.key, valueList), nil
 	default:
 		return "", fmt.Errorf("unknown filter operation")
 	}
-}
-
-// quoteValues adds quotes around string values for IN/NOT IN filters
-func quoteValues(values []string) []string {
-	quoted := make([]string, len(values))
-	for i, v := range values {
-		quoted[i] = fmt.Sprintf("\"%s\"", v)
-	}
-	return quoted
 }

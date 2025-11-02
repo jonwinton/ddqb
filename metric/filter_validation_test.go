@@ -29,20 +29,6 @@ func TestFilterInputValidation(t *testing.T) {
 			operation: "NotEqual",
 		},
 		{
-			name: "GreaterThan validation",
-			filterBuild: func() metric.FilterBuilder {
-				return metric.NewFilterBuilder("host").GreaterThan("")
-			},
-			operation: "GreaterThan",
-		},
-		{
-			name: "LessThan validation",
-			filterBuild: func() metric.FilterBuilder {
-				return metric.NewFilterBuilder("host").LessThan("")
-			},
-			operation: "LessThan",
-		},
-		{
 			name: "Regex validation",
 			filterBuild: func() metric.FilterBuilder {
 				return metric.NewFilterBuilder("host").Regex("")

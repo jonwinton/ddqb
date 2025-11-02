@@ -30,22 +30,6 @@ func TestFilterBuilder(t *testing.T) {
 			wantErr:  false,
 		},
 		{
-			name: "greater than filter",
-			build: func() (string, error) {
-				return metric.NewFilterBuilder("cpu").GreaterThan("80").Build()
-			},
-			expected: "cpu>80",
-			wantErr:  false,
-		},
-		{
-			name: "less than filter",
-			build: func() (string, error) {
-				return metric.NewFilterBuilder("cpu").LessThan("80").Build()
-			},
-			expected: "cpu<80",
-			wantErr:  false,
-		},
-		{
 			name: "regex filter",
 			build: func() (string, error) {
 				return metric.NewFilterBuilder("host").Regex("web-.*").Build()
@@ -58,7 +42,7 @@ func TestFilterBuilder(t *testing.T) {
 			build: func() (string, error) {
 				return metric.NewFilterBuilder("host").In("web-1", "web-2", "web-3").Build()
 			},
-			expected: "host IN [\"web-1\", \"web-2\", \"web-3\"]",
+			expected: "host IN (web-1,web-2,web-3)",
 			wantErr:  false,
 		},
 		{
@@ -66,7 +50,7 @@ func TestFilterBuilder(t *testing.T) {
 			build: func() (string, error) {
 				return metric.NewFilterBuilder("host").NotIn("db-1", "db-2").Build()
 			},
-			expected: "host NOT IN [\"db-1\", \"db-2\"]",
+			expected: "host NOT IN (db-1,db-2)",
 			wantErr:  false,
 		},
 		{
