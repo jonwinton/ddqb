@@ -1,4 +1,4 @@
-// Package metric provides builders for creating DataDog metric queries.
+// Package metric provides builders for creating Datadog metric queries.
 package metric
 
 import (
@@ -211,7 +211,7 @@ func (b *metricQueryBuilder) Build() (string, error) {
 			parts = append(parts, fmt.Sprintf("{%s}", strings.Join(filterStrs, ", ")))
 		}
 	} else {
-		// DataDog requires {*} for queries without filters
+		// Datadog requires {*} for queries without filters
 		parts = append(parts, "{*}")
 	}
 

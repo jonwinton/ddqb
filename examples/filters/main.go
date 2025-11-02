@@ -1,4 +1,4 @@
-// Package main demonstrates various filter operations available in ddqb for DataDog metric queries.
+// Package main demonstrates various filter operations available in ddqb for Datadog metric queries.
 package main
 
 import (
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	fmt.Println("DataDog Query Builder - Filter Examples")
+	fmt.Println("Datadog Query Builder - Filter Examples")
 	fmt.Println("=======================================")
 
 	// Example 1: Equal filter

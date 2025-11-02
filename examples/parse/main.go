@@ -1,4 +1,4 @@
-// Package main demonstrates parsing existing DataDog query strings and modifying them using ddqb.
+// Package main demonstrates parsing existing Datadog query strings and modifying them using ddqb.
 package main
 
 import (
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	fmt.Println("DataDog Query Builder - Parse and Modify Examples")
+	fmt.Println("Datadog Query Builder - Parse and Modify Examples")
 	fmt.Println("=================================================")
 
 	// Example 1: Parse a simple query and modify it

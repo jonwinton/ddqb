@@ -8,7 +8,7 @@ import (
 	"github.com/jonwinton/ddqp"
 )
 
-// ParseQuery parses a DataDog query string and returns a QueryBuilder
+// ParseQuery parses a Datadog query string and returns a QueryBuilder
 // that can be modified using the fluent API.
 func ParseQuery(queryString string) (QueryBuilder, error) {
 	// Extract time window if present (DDQP doesn't parse avg(5m): format)
