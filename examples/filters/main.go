@@ -1,3 +1,4 @@
+// Package main demonstrates various filter operations available in ddqb for DataDog metric queries.
 package main
 
 import (
@@ -17,7 +18,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(ddqb.Filter("host").Equal("web-1")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -29,7 +29,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(ddqb.Filter("host").NotEqual("web-1")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -41,7 +40,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(ddqb.Filter("host").Regex("web-.*")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -53,7 +51,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(ddqb.Filter("host").In("web-1", "web-2", "web-3")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -65,7 +62,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(ddqb.Filter("host").NotIn("db-1", "db-2")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -78,7 +74,6 @@ func main() {
 		Filter(ddqb.Filter("host").Regex("web-.*")).
 		Filter(ddqb.Filter("env").Equal("prod")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -93,7 +88,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(orGroup).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -111,7 +105,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(andNotGroup).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -129,7 +122,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(orNotGroup).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -139,17 +131,16 @@ func main() {
 	fmt.Println("Example 10: Nested groups (AND with nested OR)")
 	outerGroup := ddqb.FilterGroup()
 	outerGroup.AND(ddqb.Filter("env").Equal("prod"))
-	
+
 	innerGroup := ddqb.FilterGroup()
 	innerGroup.OR(ddqb.Filter("host").Equal("web-1"))
 	innerGroup.OR(ddqb.Filter("host").Equal("web-2"))
-	
+
 	outerGroup.AND(innerGroup)
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
 		Filter(outerGroup).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -160,11 +151,11 @@ func main() {
 	envGroup := ddqb.FilterGroup()
 	envGroup.OR(ddqb.Filter("env").Equal("prod"))
 	envGroup.OR(ddqb.Filter("env").Equal("staging"))
-	
+
 	hostGroup := ddqb.FilterGroup()
 	hostGroup.OR(ddqb.Filter("host").Regex("web-.*"))
 	hostGroup.OR(ddqb.Filter("host").Regex("api-.*"))
-	
+
 	complexGroup := ddqb.FilterGroup()
 	complexGroup.AND(envGroup)
 	complexGroup.AND(hostGroup)
@@ -172,7 +163,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(complexGroup).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -183,17 +173,16 @@ func main() {
 	group1 := ddqb.FilterGroup()
 	group1.OR(ddqb.Filter("env").Equal("prod"))
 	group1.OR(ddqb.Filter("env").Equal("staging"))
-	
+
 	group2 := ddqb.FilterGroup()
 	group2.OR(ddqb.Filter("region").Equal("us-east-1"))
 	group2.OR(ddqb.Filter("region").Equal("us-west-2"))
-	
+
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
 		Filter(group1).
 		Filter(group2).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}

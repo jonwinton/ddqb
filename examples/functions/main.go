@@ -1,3 +1,4 @@
+// Package main demonstrates how to apply functions to DataDog metric queries using ddqb.
 package main
 
 import (
@@ -17,7 +18,6 @@ func main() {
 		Metric("system.cpu.idle").
 		ApplyFunction(ddqb.Function("fill").WithArg("0")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -29,7 +29,6 @@ func main() {
 		Metric("system.cpu.idle").
 		ApplyFunction(ddqb.Function("rollup").WithArgs("60", "avg")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -41,7 +40,6 @@ func main() {
 		Metric("system.cpu.idle").
 		ApplyFunction(ddqb.Function("moving_average").WithArg("5")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -53,7 +51,6 @@ func main() {
 		Metric("system.cpu.idle").
 		ApplyFunction(ddqb.Function("timeshift").WithArg("1d")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -67,7 +64,6 @@ func main() {
 		ApplyFunction(ddqb.Function("rollup").WithArgs("60", "avg")).
 		ApplyFunction(ddqb.Function("moving_average").WithArg("5")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -85,7 +81,6 @@ func main() {
 		ApplyFunction(ddqb.Function("fill").WithArg("0")).
 		ApplyFunction(ddqb.Function("rollup").WithArgs("60", "avg")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}

@@ -5,7 +5,7 @@ import "github.com/jonwinton/ddqb/metric"
 
 // Metric creates a new metric query builder.
 // This is the main entry point for building metric queries.
-func Metric() metric.MetricQueryBuilder {
+func Metric() metric.QueryBuilder {
 	return metric.NewMetricQueryBuilder()
 }
 
@@ -27,7 +27,7 @@ func FilterGroup() metric.FilterGroupBuilder {
 	return metric.NewFilterGroupBuilder()
 }
 
-// FromQuery parses an existing DataDog query string and returns a MetricQueryBuilder
+// FromQuery parses an existing DataDog query string and returns a QueryBuilder
 // that can be modified using the fluent API.
 //
 // Example:
@@ -37,6 +37,6 @@ func FilterGroup() metric.FilterGroupBuilder {
 //		// handle error
 //	}
 //	modifiedQuery, err := builder.TimeWindow("10m").Filter(ddqb.Filter("env").Equal("prod")).Build()
-func FromQuery(queryString string) (metric.MetricQueryBuilder, error) {
+func FromQuery(queryString string) (metric.QueryBuilder, error) {
 	return metric.ParseQuery(queryString)
 }

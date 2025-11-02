@@ -92,7 +92,7 @@ func TestDataDogQueryFormat(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to build query: %v", err)
 			}
-			
+
 			if result != tc.expected {
 				t.Errorf("Query format incorrect\nExpected: %s\nActual:   %s", tc.expected, result)
 			}

@@ -1,3 +1,4 @@
+// Package main demonstrates parsing existing DataDog query strings and modifying them using ddqb.
 package main
 
 import (
@@ -118,4 +119,3 @@ func main() {
 	}
 	fmt.Printf("Rebuilt:    %s\n", rebuilt)
 }
-

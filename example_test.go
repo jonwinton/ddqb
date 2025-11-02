@@ -12,7 +12,6 @@ func Example() {
 	query, err := ddqb.Metric().
 		Metric("system.cpu.idle").
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -24,7 +23,6 @@ func Example() {
 		TimeWindow("5m").
 		Metric("system.cpu.idle").
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -35,7 +33,6 @@ func Example() {
 		Metric("system.cpu.idle").
 		Filter(ddqb.Filter("host").Equal("web-1")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -52,7 +49,6 @@ func Example() {
 		ApplyFunction(ddqb.Function("fill").WithArg("0")).
 		ApplyFunction(ddqb.Function("rollup").WithArgs("60", "sum")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}

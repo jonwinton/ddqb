@@ -11,91 +11,91 @@ func TestParseQuery(t *testing.T) {
 	tests := []struct {
 		name        string
 		queryString string
-		build       func(metric.MetricQueryBuilder) metric.MetricQueryBuilder
+		build       func(metric.QueryBuilder) metric.QueryBuilder
 		expected    string
 		wantErr     bool
 	}{
 		{
 			name:        "simple metric query",
 			queryString: "system.cpu.idle{*}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{*}",
 			wantErr:     false,
 		},
 		{
 			name:        "metric query with aggregator",
 			queryString: "avg:system.cpu.idle{*}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "avg:system.cpu.idle{*}",
 			wantErr:     false,
 		},
 		{
 			name:        "metric query with aggregator and time window",
 			queryString: "avg(5m):system.cpu.idle{*}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "avg(5m):system.cpu.idle{*}",
 			wantErr:     false,
 		},
 		{
 			name:        "metric query with filter",
 			queryString: "system.cpu.idle{host:web-1}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{host:web-1}",
 			wantErr:     false,
 		},
 		{
 			name:        "metric query with multiple filters",
 			queryString: "system.cpu.idle{host:web-1,env:prod}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{host:web-1, env:prod}",
 			wantErr:     false,
 		},
 		{
 			name:        "metric query with group by",
 			queryString: "system.cpu.idle{*} by {host}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{*} by {host}",
 			wantErr:     false,
 		},
 		{
 			name:        "metric query with function",
 			queryString: "system.cpu.idle{*}.fill(0)",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{*}.fill(0)",
 			wantErr:     false,
 		},
 		{
 			name:        "complex metric query",
 			queryString: "avg(5m):system.cpu.idle{host:web-1,env:prod} by {host}.fill(0).rollup(60,avg)",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "avg(5m):system.cpu.idle{host:web-1, env:prod} by {host}.fill(0).rollup(60, avg)",
 			wantErr:     false,
 		},
 		{
 			name:        "query with regex filter",
 			queryString: "system.cpu.idle{host:~web-.*}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{host:~web-.*}",
 			wantErr:     false,
 		},
 		{
 			name:        "query with IN filter",
 			queryString: "system.cpu.idle{host IN (web-1,web-2,web-3)}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{host IN (web-1,web-2,web-3)}",
 			wantErr:     false,
 		},
 		{
 			name:        "query with NOT IN filter",
 			queryString: "system.cpu.idle{host NOT IN (db-1,db-2)}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{host NOT IN (db-1,db-2)}",
 			wantErr:     false,
 		},
 		{
 			name:        "query with not equal filter",
 			queryString: "system.cpu.idle{!host:web-1}",
-			build:       func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder { return b },
+			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
 			expected:    "system.cpu.idle{host!:web-1}",
 			wantErr:     false,
 		},
@@ -133,13 +133,13 @@ func TestParseQueryModify(t *testing.T) {
 	tests := []struct {
 		name        string
 		queryString string
-		modify      func(metric.MetricQueryBuilder) metric.MetricQueryBuilder
+		modify      func(metric.QueryBuilder) metric.QueryBuilder
 		expected    string
 	}{
 		{
 			name:        "parse and change time window",
 			queryString: "avg(5m):system.cpu.idle{*}",
-			modify: func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder {
+			modify: func(b metric.QueryBuilder) metric.QueryBuilder {
 				return b.TimeWindow("10m")
 			},
 			expected: "avg(10m):system.cpu.idle{*}",
@@ -147,7 +147,7 @@ func TestParseQueryModify(t *testing.T) {
 		{
 			name:        "parse and add filter",
 			queryString: "system.cpu.idle{host:web-1}",
-			modify: func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder {
+			modify: func(b metric.QueryBuilder) metric.QueryBuilder {
 				return b.Filter(ddqb.Filter("env").Equal("prod"))
 			},
 			expected: "system.cpu.idle{host:web-1, env:prod}",
@@ -155,7 +155,7 @@ func TestParseQueryModify(t *testing.T) {
 		{
 			name:        "parse and change aggregator",
 			queryString: "avg:system.cpu.idle{*}",
-			modify: func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder {
+			modify: func(b metric.QueryBuilder) metric.QueryBuilder {
 				return b.Aggregator("sum")
 			},
 			expected: "sum:system.cpu.idle{*}",
@@ -163,7 +163,7 @@ func TestParseQueryModify(t *testing.T) {
 		{
 			name:        "parse and add function",
 			queryString: "system.cpu.idle{*}",
-			modify: func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder {
+			modify: func(b metric.QueryBuilder) metric.QueryBuilder {
 				return b.ApplyFunction(ddqb.Function("fill").WithArg("0"))
 			},
 			expected: "system.cpu.idle{*}.fill(0)",
@@ -171,7 +171,7 @@ func TestParseQueryModify(t *testing.T) {
 		{
 			name:        "parse and modify multiple components",
 			queryString: "avg(5m):system.cpu.idle{host:web-1}",
-			modify: func(b metric.MetricQueryBuilder) metric.MetricQueryBuilder {
+			modify: func(b metric.QueryBuilder) metric.QueryBuilder {
 				return b.
 					TimeWindow("10m").
 					Filter(ddqb.Filter("env").Equal("prod")).
@@ -262,7 +262,7 @@ func TestParseComplexNestedFilters(t *testing.T) {
 	queryString := "system.cpu.idle{env:prod AND (host:web-1 OR host:web-2) AND NOT (region:us-west-1)}"
 	expectedAfterParse := "system.cpu.idle{(env:prod AND (host:web-1 AND host:web-2) AND region:us-west-1)}"
 	expectedAfterAddingFilter := "system.cpu.idle{((env:prod AND (host:web-1 AND host:web-2) AND region:us-west-1) AND service:api)}"
-	
+
 	builder, err := metric.ParseQuery(queryString)
 	if err != nil {
 		t.Fatalf("ParseQuery() error = %v", err)
@@ -273,14 +273,14 @@ func TestParseComplexNestedFilters(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Build() error = %v", err)
 	}
-	
+
 	if result != expectedAfterParse {
 		t.Errorf("Build() after parse = %q, want %q", result, expectedAfterParse)
 	}
 
 	// Now add a new filter and verify it's added correctly
 	builder = builder.Filter(ddqb.Filter("service").Equal("api"))
-	
+
 	result, err = builder.Build()
 	if err != nil {
 		t.Fatalf("Build() after adding filter error = %v", err)
@@ -297,7 +297,7 @@ func TestParseComplexNestedFiltersWithORNOT(t *testing.T) {
 	queryString := "avg(5m):system.cpu.idle{env:prod OR NOT (host:web-1) AND (region:us-east-1 OR region:us-west-2)}"
 	expectedAfterParse := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
 	expectedAfterAddingFilter := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)) AND team:backend)}"
-	
+
 	builder, err := metric.ParseQuery(queryString)
 	if err != nil {
 		t.Fatalf("ParseQuery() error = %v", err)
@@ -308,14 +308,14 @@ func TestParseComplexNestedFiltersWithORNOT(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Build() error = %v", err)
 	}
-	
+
 	if result != expectedAfterParse {
 		t.Errorf("Build() after parse = %q, want %q", result, expectedAfterParse)
 	}
 
 	// Add a new filter
 	builder = builder.Filter(ddqb.Filter("team").Equal("backend"))
-	
+
 	result, err = builder.Build()
 	if err != nil {
 		t.Fatalf("Build() after adding filter error = %v", err)
@@ -326,22 +326,21 @@ func TestParseComplexNestedFiltersWithORNOT(t *testing.T) {
 	}
 }
 
-
 func TestGetFiltersAndModifyGroups(t *testing.T) {
 	queryString := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
 	builder, _ := metric.ParseQuery(queryString)
-	
+
 	// Access filters directly
 	filters := builder.GetFilters()
 	if len(filters) == 0 {
 		t.Fatal("Expected at least one filter")
 	}
-	
+
 	// Modify the first group directly
 	if group, ok := filters[0].(metric.FilterGroupBuilder); ok {
 		group.AND(ddqb.Filter("service").Equal("api"))
 	}
-	
+
 	result, _ := builder.Build()
 	expected := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)) AND service:api)}"
 	if result != expected {
@@ -352,7 +351,7 @@ func TestGetFiltersAndModifyGroups(t *testing.T) {
 func TestAddFilterToDeepestNestedGroup(t *testing.T) {
 	queryString := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
 	expected := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2 AND region:ap-southeast-2)))}"
-	
+
 	builder, err := metric.ParseQuery(queryString)
 	if err != nil {
 		t.Fatalf("ParseQuery() error = %v", err)
@@ -388,19 +387,19 @@ func TestAddFilterToDeepestNestedGroup(t *testing.T) {
 		// The deepest group should not have nested parentheses
 		return !foundNestedParen
 	})
-	
+
 	if deepestGroup == nil {
 		t.Fatal("Expected to find a deepest nested group")
 	}
-	
+
 	// Add filter to the deepest group
 	builder = builder.AddToGroup(deepestGroup, ddqb.Filter("region").Equal("ap-southeast-2"))
-	
+
 	result, err := builder.Build()
 	if err != nil {
 		t.Fatalf("Build() error = %v", err)
 	}
-	
+
 	if result != expected {
 		t.Errorf("Build() after adding to deepest group = %q, want %q", result, expected)
 	}
@@ -408,12 +407,12 @@ func TestAddFilterToDeepestNestedGroup(t *testing.T) {
 
 // Helper function to check if a string contains a substring
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && 
-		(s == substr || 
-		 (len(s) > len(substr) && 
-		  (s[:len(substr)] == substr || 
-		   s[len(s)-len(substr):] == substr ||
-		   findInMiddle(s, substr))))
+	return len(s) >= len(substr) &&
+		(s == substr ||
+			(len(s) > len(substr) &&
+				(s[:len(substr)] == substr ||
+					s[len(s)-len(substr):] == substr ||
+					findInMiddle(s, substr))))
 }
 
 func findInMiddle(s, substr string) bool {
@@ -428,19 +427,19 @@ func findInMiddle(s, substr string) bool {
 func TestFindGroupAndAddToGroup(t *testing.T) {
 	queryString := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
 	builder, _ := metric.ParseQuery(queryString)
-	
+
 	// Find any group (first one found)
-	group := builder.FindGroup(func(g metric.FilterGroupBuilder) bool {
+	group := builder.FindGroup(func(_ metric.FilterGroupBuilder) bool {
 		return true // Find first group
 	})
-	
+
 	if group == nil {
 		t.Fatal("Expected to find a group")
 	}
-	
+
 	// Add filter to the found group
 	builder = builder.AddToGroup(group, ddqb.Filter("region").Equal("us-west-1"))
-	
+
 	result, _ := builder.Build()
 	expected := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)) AND region:us-west-1)}"
 	if result != expected {

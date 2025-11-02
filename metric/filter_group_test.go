@@ -176,11 +176,11 @@ func TestFilterGroupBuilder_Nested(t *testing.T) {
 			build: func() (string, error) {
 				outerGroup := NewFilterGroupBuilder()
 				outerGroup.AND(NewFilterBuilder("env").Equal("prod"))
-				
+
 				innerGroup := NewFilterGroupBuilder()
 				innerGroup.OR(NewFilterBuilder("host").Equal("web-1"))
 				innerGroup.OR(NewFilterBuilder("host").Equal("web-2"))
-				
+
 				outerGroup.AND(innerGroup)
 				return outerGroup.Build()
 			},
@@ -192,11 +192,11 @@ func TestFilterGroupBuilder_Nested(t *testing.T) {
 			build: func() (string, error) {
 				outerGroup := NewFilterGroupBuilder()
 				outerGroup.OR(NewFilterBuilder("env").Equal("prod"))
-				
+
 				innerGroup := NewFilterGroupBuilder()
 				innerGroup.AND(NewFilterBuilder("host").Equal("web-1"))
 				innerGroup.AND(NewFilterBuilder("region").Equal("us-east-1"))
-				
+
 				outerGroup.OR(innerGroup)
 				return outerGroup.Build()
 			},
@@ -207,15 +207,15 @@ func TestFilterGroupBuilder_Nested(t *testing.T) {
 			name: "complex nested groups",
 			build: func() (string, error) {
 				outerGroup := NewFilterGroupBuilder()
-				
+
 				envGroup := NewFilterGroupBuilder()
 				envGroup.OR(NewFilterBuilder("env").Equal("prod"))
 				envGroup.OR(NewFilterBuilder("env").Equal("staging"))
-				
+
 				hostGroup := NewFilterGroupBuilder()
 				hostGroup.OR(NewFilterBuilder("host").Regex("web-.*"))
 				hostGroup.OR(NewFilterBuilder("host").Regex("api-.*"))
-				
+
 				outerGroup.AND(envGroup)
 				outerGroup.AND(hostGroup)
 				return outerGroup.Build()
@@ -247,7 +247,7 @@ func TestFilterGroupBuilder_EmptyGroup(t *testing.T) {
 	}
 }
 
-func TestFilterGroupBuilder_WithMetricQueryBuilder(t *testing.T) {
+func TestFilterGroupBuilder_WithQueryBuilder(t *testing.T) {
 	tests := []struct {
 		name     string
 		build    func() (string, error)
@@ -260,7 +260,7 @@ func TestFilterGroupBuilder_WithMetricQueryBuilder(t *testing.T) {
 				group := NewFilterGroupBuilder()
 				group.OR(NewFilterBuilder("env").Equal("prod"))
 				group.OR(NewFilterBuilder("env").Equal("staging"))
-				
+
 				builder := NewMetricQueryBuilder()
 				builder.Metric("system.cpu.idle")
 				builder.Filter(group)
@@ -275,9 +275,9 @@ func TestFilterGroupBuilder_WithMetricQueryBuilder(t *testing.T) {
 				envGroup := NewFilterGroupBuilder()
 				envGroup.OR(NewFilterBuilder("env").Equal("prod"))
 				envGroup.OR(NewFilterBuilder("env").Equal("staging"))
-				
+
 				hostFilter := NewFilterBuilder("host").Equal("web-1")
-				
+
 				builder := NewMetricQueryBuilder()
 				builder.Metric("system.cpu.idle")
 				builder.Filter(envGroup)
@@ -294,7 +294,7 @@ func TestFilterGroupBuilder_WithMetricQueryBuilder(t *testing.T) {
 				group.AND(NewFilterBuilder("env").Equal("prod"))
 				group.AND(NewFilterBuilder("host").Equal("web-1"))
 				group.Not()
-				
+
 				builder := NewMetricQueryBuilder()
 				builder.Metric("system.cpu.idle")
 				builder.Filter(group)
@@ -318,4 +318,3 @@ func TestFilterGroupBuilder_WithMetricQueryBuilder(t *testing.T) {
 		})
 	}
 }
-
