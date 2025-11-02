@@ -7,7 +7,7 @@ import (
 	"github.com/jonwinton/ddqb/metric"
 )
 
-func TestMetricQueryBuilder(t *testing.T) {
+func TestQueryBuilder(t *testing.T) {
 	tests := []struct {
 		name     string
 		build    func() (string, error)
@@ -147,7 +147,6 @@ func TestTopLevelAPI(t *testing.T) {
 		GroupBy("host").
 		ApplyFunction(ddqb.Function("fill").WithArg("0")).
 		Build()
-
 	if err != nil {
 		t.Errorf("Build() returned an error: %v", err)
 	}

@@ -1,0 +1,35 @@
+version: "2"
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - ineffassign
+    - gosec
+    - gocritic
+    - revive
+
+formatters:
+  enable:
+    - gofumpt
+    - gofmt
+
+formatters-settings:
+  gofumpt:
+    extra-rules: true
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+run:
+  timeout: 5m
+  tests: true

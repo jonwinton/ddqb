@@ -1,3 +1,4 @@
+// Package main demonstrates basic usage examples of ddqb for building DataDog metric queries.
 package main
 
 import (
@@ -13,7 +14,6 @@ func main() {
 	query, err := ddqb.Metric().
 		Metric("system.cpu.idle").
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -27,7 +27,6 @@ func main() {
 		TimeWindow("5m").
 		Metric("system.cpu.idle").
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -39,7 +38,6 @@ func main() {
 		Metric("system.cpu.idle").
 		Filter(ddqb.Filter("host").Equal("web-1")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -52,7 +50,6 @@ func main() {
 		Filter(ddqb.Filter("host").Equal("web-1")).
 		Filter(ddqb.Filter("env").Equal("prod")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -64,7 +61,6 @@ func main() {
 		Metric("system.cpu.idle").
 		GroupBy("host", "env").
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -76,7 +72,6 @@ func main() {
 		Metric("system.cpu.idle").
 		ApplyFunction(ddqb.Function("fill").WithArg("0")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}
@@ -94,7 +89,6 @@ func main() {
 		ApplyFunction(ddqb.Function("fill").WithArg("0")).
 		ApplyFunction(ddqb.Function("rollup").WithArgs("60", "sum")).
 		Build()
-
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
 	}

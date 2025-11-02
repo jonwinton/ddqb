@@ -1,3 +1,5 @@
+// Package main demonstrates advanced usage of ddqb, including dynamic query building
+// based on runtime conditions.
 package main
 
 import (
@@ -77,7 +79,7 @@ func main() {
 
 	// Example 1: Dynamic Query Building
 	fmt.Println("Example 1: Dynamic Query Building")
-	
+
 	// Scenario 1: Query for staging environment with specific host pattern and time window
 	query, err := buildDynamicQuery("system.cpu.user", "web-*", []string{"staging"}, "5m")
 	if err != nil {

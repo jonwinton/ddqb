@@ -9,9 +9,9 @@ import (
 // TestMetricBuilderErrors tests error cases for the metric builder
 func TestMetricBuilderErrors(t *testing.T) {
 	tests := []struct {
-		name     string
-		build    func() (string, error)
-		wantErr  bool
+		name    string
+		build   func() (string, error)
+		wantErr bool
 	}{
 		{
 			name: "error - missing metric",
@@ -27,7 +27,7 @@ func TestMetricBuilderErrors(t *testing.T) {
 			build: func() (string, error) {
 				// Create a filter that will fail on build (empty key)
 				emptyKeyFilter := metric.NewFilterBuilder("")
-				
+
 				return metric.NewMetricQueryBuilder().
 					Metric("system.cpu.idle").
 					Filter(emptyKeyFilter).
@@ -40,7 +40,7 @@ func TestMetricBuilderErrors(t *testing.T) {
 			build: func() (string, error) {
 				// Create a function that will fail on build (empty name)
 				emptyFunc := metric.NewFunctionBuilder("")
-				
+
 				return metric.NewMetricQueryBuilder().
 					Metric("system.cpu.idle").
 					ApplyFunction(emptyFunc).
@@ -53,11 +53,11 @@ func TestMetricBuilderErrors(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.build()
-			
+
 			if tt.wantErr && err == nil {
 				t.Errorf("Expected error for %s but got nil", tt.name)
 			}
-			
+
 			if !tt.wantErr && err != nil {
 				t.Errorf("Unexpected error for %s: %v", tt.name, err)
 			}

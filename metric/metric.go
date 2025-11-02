@@ -6,16 +6,16 @@ import (
 	"strings"
 )
 
-// MetricQueryBuilder provides a fluent interface for building metric queries.
-type MetricQueryBuilder interface {
+// QueryBuilder provides a fluent interface for building metric queries.
+type QueryBuilder interface {
 	// Metric sets the metric name for the query.
-	Metric(name string) MetricQueryBuilder
+	Metric(name string) QueryBuilder
 
 	// Aggregator sets the aggregation method for the query (e.g., "avg", "sum").
-	Aggregator(agg string) MetricQueryBuilder
+	Aggregator(agg string) QueryBuilder
 
 	// Filter adds a filter condition or filter group to the query.
-	Filter(filter FilterExpression) MetricQueryBuilder
+	Filter(filter FilterExpression) QueryBuilder
 
 	// GetFilters returns all filter expressions in the query.
 	// This allows direct access to modify FilterGroupBuilder instances.
@@ -27,22 +27,22 @@ type MetricQueryBuilder interface {
 
 	// AddToGroup adds a filter to the specified FilterGroupBuilder.
 	// The filter is added using the group's existing operator (AND or OR).
-	AddToGroup(group FilterGroupBuilder, filter FilterExpression) MetricQueryBuilder
+	AddToGroup(group FilterGroupBuilder, filter FilterExpression) QueryBuilder
 
 	// GroupBy sets grouping parameters for the query.
-	GroupBy(groups ...string) MetricQueryBuilder
+	GroupBy(groups ...string) QueryBuilder
 
 	// ApplyFunction applies a function to the query.
-	ApplyFunction(fn FunctionBuilder) MetricQueryBuilder
+	ApplyFunction(fn FunctionBuilder) QueryBuilder
 
 	// TimeWindow sets the time window for the query (e.g., "1m", "5m").
-	TimeWindow(window string) MetricQueryBuilder
+	TimeWindow(window string) QueryBuilder
 
 	// Build returns the built query as a string.
 	Build() (string, error)
 }
 
-// metricQueryBuilder is the concrete implementation of the MetricQueryBuilder interface.
+// metricQueryBuilder is the concrete implementation of the QueryBuilder interface.
 type metricQueryBuilder struct {
 	metric     string
 	aggregator string
@@ -53,7 +53,7 @@ type metricQueryBuilder struct {
 }
 
 // NewMetricQueryBuilder creates a new metric query builder.
-func NewMetricQueryBuilder() MetricQueryBuilder {
+func NewMetricQueryBuilder() QueryBuilder {
 	return &metricQueryBuilder{
 		filters:   make([]FilterExpression, 0),
 		groupBy:   make([]string, 0),
@@ -62,19 +62,19 @@ func NewMetricQueryBuilder() MetricQueryBuilder {
 }
 
 // Metric sets the metric name for the query.
-func (b *metricQueryBuilder) Metric(name string) MetricQueryBuilder {
+func (b *metricQueryBuilder) Metric(name string) QueryBuilder {
 	b.metric = name
 	return b
 }
 
 // Aggregator sets the aggregation method for the query (e.g., "avg", "sum").
-func (b *metricQueryBuilder) Aggregator(agg string) MetricQueryBuilder {
+func (b *metricQueryBuilder) Aggregator(agg string) QueryBuilder {
 	b.aggregator = agg
 	return b
 }
 
 // Filter adds a filter condition or filter group to the query.
-func (b *metricQueryBuilder) Filter(filter FilterExpression) MetricQueryBuilder {
+func (b *metricQueryBuilder) Filter(filter FilterExpression) QueryBuilder {
 	b.filters = append(b.filters, filter)
 	return b
 }
@@ -98,7 +98,7 @@ func (b *metricQueryBuilder) FindGroup(predicate func(FilterGroupBuilder) bool) 
 }
 
 // AddToGroup adds a filter to the specified FilterGroupBuilder.
-func (b *metricQueryBuilder) AddToGroup(group FilterGroupBuilder, filter FilterExpression) MetricQueryBuilder {
+func (b *metricQueryBuilder) AddToGroup(group FilterGroupBuilder, filter FilterExpression) QueryBuilder {
 	if group == nil {
 		// If group is nil, just add as a new filter
 		b.filters = append(b.filters, filter)
@@ -136,19 +136,19 @@ func findGroupRecursive(expr FilterExpression, predicate func(FilterGroupBuilder
 }
 
 // GroupBy sets grouping parameters for the query.
-func (b *metricQueryBuilder) GroupBy(groups ...string) MetricQueryBuilder {
+func (b *metricQueryBuilder) GroupBy(groups ...string) QueryBuilder {
 	b.groupBy = append(b.groupBy, groups...)
 	return b
 }
 
 // ApplyFunction applies a function to the query.
-func (b *metricQueryBuilder) ApplyFunction(fn FunctionBuilder) MetricQueryBuilder {
+func (b *metricQueryBuilder) ApplyFunction(fn FunctionBuilder) QueryBuilder {
 	b.functions = append(b.functions, fn)
 	return b
 }
 
 // TimeWindow sets the time window for the query (e.g., "1m", "5m").
-func (b *metricQueryBuilder) TimeWindow(window string) MetricQueryBuilder {
+func (b *metricQueryBuilder) TimeWindow(window string) QueryBuilder {
 	b.timeWindow = window
 	return b
 }
@@ -231,4 +231,3 @@ func (b *metricQueryBuilder) Build() (string, error) {
 
 	return strings.Join(parts, ""), nil
 }
-

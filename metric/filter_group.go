@@ -54,11 +54,8 @@ func (b *filterGroupBuilder) AND(expr FilterExpression) FilterGroupBuilder {
 		b.operator = AndOperator
 		b.expressions = append(b.expressions, expr)
 	} else {
-		// Check if operator matches
-		if b.operator != AndOperator {
-			// Mixing operators requires a nested group
-			// For now, we'll allow it but users should use nested groups for clarity
-		}
+		// Mixing operators requires a nested group
+		// For now, we'll allow it but users should use nested groups for clarity
 		b.expressions = append(b.expressions, expr)
 	}
 	return b
@@ -72,11 +69,8 @@ func (b *filterGroupBuilder) OR(expr FilterExpression) FilterGroupBuilder {
 		b.operator = OrOperator
 		b.expressions = append(b.expressions, expr)
 	} else {
-		// Check if operator matches
-		if b.operator != OrOperator {
-			// Mixing operators requires a nested group
-			// For now, we'll allow it but users should use nested groups for clarity
-		}
+		// Mixing operators requires a nested group
+		// For now, we'll allow it but users should use nested groups for clarity
 		b.expressions = append(b.expressions, expr)
 	}
 	return b
@@ -126,4 +120,3 @@ func (b *filterGroupBuilder) Build() (string, error) {
 
 	return groupStr, nil
 }
-

@@ -8,9 +8,9 @@ import (
 	"github.com/jonwinton/ddqp"
 )
 
-// ParseQuery parses a DataDog query string and returns a MetricQueryBuilder
+// ParseQuery parses a DataDog query string and returns a QueryBuilder
 // that can be modified using the fluent API.
-func ParseQuery(queryString string) (MetricQueryBuilder, error) {
+func ParseQuery(queryString string) (QueryBuilder, error) {
 	// Extract time window if present (DDQP doesn't parse avg(5m): format)
 	timeWindow, cleanedQuery := extractAndRemoveTimeWindow(queryString)
 
@@ -202,10 +202,10 @@ func convertGroupedFilter(gf *ddqp.GroupedFilter) (FilterExpression, error) {
 	}
 
 	group := NewFilterGroupBuilder()
-	var currentOperator GroupOperator = AndOperator // Default to AND
+	currentOperator := AndOperator // Default to AND
 
 	// Process parameters in the grouped filter
-	for i, param := range gf.Parameters {
+	for _, param := range gf.Parameters {
 		// Check for separator to determine operator
 		if param.Separator != nil {
 			if param.Separator.And || param.Separator.Comma {
@@ -226,20 +226,10 @@ func convertGroupedFilter(gf *ddqp.GroupedFilter) (FilterExpression, error) {
 		}
 
 		// Add to group with appropriate operator
-		if i == 0 {
-			// First expression determines the group operator
-			if currentOperator == AndOperator {
-				group.AND(expr)
-			} else {
-				group.OR(expr)
-			}
+		if currentOperator == AndOperator {
+			group.AND(expr)
 		} else {
-			// Subsequent expressions use the current operator
-			if currentOperator == AndOperator {
-				group.AND(expr)
-			} else {
-				group.OR(expr)
-			}
+			group.OR(expr)
 		}
 	}
 
@@ -417,4 +407,3 @@ func extractAndRemoveTimeWindow(queryString string) (timeWindow string, cleanedQ
 	// No time window found, return original query
 	return "", queryString
 }
-

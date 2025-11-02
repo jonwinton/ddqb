@@ -6,7 +6,7 @@ import (
 )
 
 // FilterExpression is a common interface for both individual filters and filter groups.
-// This allows MetricQueryBuilder to accept either FilterBuilder or FilterGroupBuilder instances.
+// This allows QueryBuilder to accept either FilterBuilder or FilterGroupBuilder instances.
 type FilterExpression interface {
 	// Build returns the built filter expression as a string.
 	Build() (string, error)

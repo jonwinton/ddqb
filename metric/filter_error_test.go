@@ -56,11 +56,11 @@ func TestFilterBuilderErrors(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.filterBuild()
-			
+
 			if tt.expectError && err == nil {
 				t.Errorf("Expected error for %s but got nil", tt.name)
 			}
-			
+
 			if !tt.expectError && err != nil {
 				t.Errorf("Unexpected error for %s: %v", tt.name, err)
 			}
