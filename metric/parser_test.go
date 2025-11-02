@@ -339,7 +339,7 @@ func TestGetFiltersAndModifyGroups(t *testing.T) {
 
 	// Modify the first group directly
 	if group, ok := filters[0].(metric.FilterGroupBuilder); ok {
-		group.AND(ddqb.Filter("service").Equal("api"))
+		group.And(ddqb.Filter("service").Equal("api"))
 	}
 
 	result, _ := builder.Build()
@@ -458,8 +458,8 @@ func TestExpressionNormalization_MixedAndComma(t *testing.T) {
 
 	// Add a filter group using explicit OR, which mixes styles
 	fg := metric.NewFilterGroupBuilder()
-	fg.OR(ddqb.Filter("service").Equal("api"))
-	fg.OR(ddqb.Filter("team").Equal("backend"))
+	fg.Or(ddqb.Filter("service").Equal("api"))
+	fg.Or(ddqb.Filter("team").Equal("backend"))
 	builder = builder.Filter(fg)
 
 	out, err := builder.Build()
