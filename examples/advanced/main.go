@@ -74,7 +74,7 @@ func buildMonitoringQuery(metric string, threshold float64, windowMins int) (str
 }
 
 func main() {
-	fmt.Println("DataDog Query Builder - Advanced Usage Examples")
+	fmt.Println("Datadog Query Builder - Advanced Usage Examples")
 	fmt.Println("=============================================")
 
 	// Example 1: Dynamic Query Building

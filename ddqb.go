@@ -1,4 +1,4 @@
-// Package ddqb provides a fluent API for building DataDog queries.
+// Package ddqb provides a fluent API for building Datadog queries.
 package ddqb
 
 import "github.com/jonwinton/ddqb/metric"
@@ -27,7 +27,7 @@ func FilterGroup() metric.FilterGroupBuilder {
 	return metric.NewFilterGroupBuilder()
 }
 
-// FromQuery parses an existing DataDog query string and returns a QueryBuilder
+// FromQuery parses an existing Datadog query string and returns a QueryBuilder
 // that can be modified using the fluent API.
 //
 // Example:

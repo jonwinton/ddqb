@@ -1,4 +1,4 @@
-// Package main demonstrates how to apply functions to DataDog metric queries using ddqb.
+// Package main demonstrates how to apply functions to Datadog metric queries using ddqb.
 package main
 
 import (
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	fmt.Println("DataDog Query Builder - Function Examples")
+	fmt.Println("Datadog Query Builder - Function Examples")
 	fmt.Println("========================================")
 
 	// Example 1: Fill function with zero

@@ -1,6 +1,6 @@
 # DDQB Examples
 
-This directory contains example Go programs that demonstrate how to use the DataDog Query Builder (DDQB) library.
+This directory contains example Go programs that demonstrate how to use the Datadog Query Builder (DDQB) library.
 
 ## Running the Examples
 
@@ -59,7 +59,7 @@ Demonstrates more complex use cases and patterns:
 
 ### 5. Parse Examples
 
-Demonstrates how to parse existing DataDog query strings and modify them:
+Demonstrates how to parse existing Datadog query strings and modify them:
 
 - Parsing simple queries and adding filters
 - Parsing complex queries and modifying components (time windows, aggregators, functions)
@@ -68,4 +68,4 @@ Demonstrates how to parse existing DataDog query strings and modify them:
 
 ## Example Output
 
-Each example will print the constructed query strings, allowing you to see exactly how DDQB translates builder method calls into DataDog query syntax.
+Each example will print the constructed query strings, allowing you to see exactly how DDQB translates builder method calls into Datadog query syntax.

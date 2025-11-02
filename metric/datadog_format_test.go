@@ -6,9 +6,9 @@ import (
 	"github.com/jonwinton/ddqb"
 )
 
-// TestDataDogQueryFormat verifies that queries are formatted
-// according to standard DataDog query format (without spaces between components)
-func TestDataDogQueryFormat(t *testing.T) {
+// TestDatadogQueryFormat verifies that queries are formatted
+// according to standard Datadog query format (without spaces between components)
+func TestDatadogQueryFormat(t *testing.T) {
 	tests := []struct {
 		name     string
 		build    func() (string, error)

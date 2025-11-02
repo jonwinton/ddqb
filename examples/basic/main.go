@@ -1,4 +1,4 @@
-// Package main demonstrates basic usage examples of ddqb for building DataDog metric queries.
+// Package main demonstrates basic usage examples of ddqb for building Datadog metric queries.
 package main
 
 import (
@@ -18,7 +18,7 @@ func main() {
 		log.Fatalf("Failed to build query: %v", err)
 	}
 	fmt.Printf("Query: %s\n\n", query)
-	// Result will include {*} as DataDog requires: system.cpu.idle {*}
+	// Result will include {*} as Datadog requires: system.cpu.idle {*}
 
 	// Example 2: Metric query with aggregation
 	fmt.Println("Example 2: Metric query with aggregation")

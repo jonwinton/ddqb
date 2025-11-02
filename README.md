@@ -1,10 +1,10 @@
-# DDQB - DataDog Query Builder
+# DDQB - Datadog Query Builder
 
-DDQB is a Go library that provides a fluent, chainable API for building DataDog queries programmatically. It's designed as a companion to [DDQP](https://github.com/jonwinton/ddqp) (DataDog Query Parser).
+DDQB is a Go library that provides a fluent, chainable API for building Datadog queries programmatically. It's designed as a companion to [DDQP](https://github.com/jonwinton/ddqp) (Datadog Query Parser).
 
 ## Overview
 
-Building complex DataDog queries through string manipulation can be error-prone and difficult to maintain. DDQB aims to solve this by providing:
+Building complex Datadog queries through string manipulation can be error-prone and difficult to maintain. DDQB aims to solve this by providing:
 
 - A fluent, chainable API for query construction
 - Type safety and validation
@@ -82,3 +82,32 @@ This project is in the initial development phase. Contributions and feedback are
 ## License
 
 Apache License 2.0
+
+## Documentation
+
+This repo uses **MkDocs + Material** for docs.
+
+- Local preview:
+
+  ```bash
+  pip install -r requirements.txt
+  mkdocs serve
+  ```
+
+- Using just:
+  ```bash
+  just docs-serve
+  just docs-build
+  just docs-deploy
+  just docs-api
+  # list available tasks
+  just help
+  ```
+
+* Manual deploy without just (optional):
+
+  ```bash
+  mkdocs gh-deploy --force
+  ```
+
+* Published site: https://jonwinton.github.io/ddqb
