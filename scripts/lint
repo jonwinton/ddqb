@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+# Check formatting with gofumpt
+echo "Checking formatting with gofumpt..."
+./bin/gofumpt -l -d .
+
+# Run golangci-lint (includes formatters)
+echo "Running golangci-lint..."
+./bin/golangci-lint run
