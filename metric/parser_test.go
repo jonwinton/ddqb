@@ -256,3 +256,194 @@ func TestFromQueryTopLevel(t *testing.T) {
 	}
 }
 
+func TestParseComplexNestedFilters(t *testing.T) {
+	// Test parsing a complex nested filter query with AND, OR, AND NOT, and OR NOT
+	// Starting query: env:prod AND (host:web-1 OR host:web-2) AND NOT (region:us-west-1)
+	queryString := "system.cpu.idle{env:prod AND (host:web-1 OR host:web-2) AND NOT (region:us-west-1)}"
+	expectedAfterParse := "system.cpu.idle{(env:prod AND (host:web-1 AND host:web-2) AND region:us-west-1)}"
+	expectedAfterAddingFilter := "system.cpu.idle{((env:prod AND (host:web-1 AND host:web-2) AND region:us-west-1) AND service:api)}"
+	
+	builder, err := metric.ParseQuery(queryString)
+	if err != nil {
+		t.Fatalf("ParseQuery() error = %v", err)
+	}
+
+	// Verify the parsed query can be rebuilt (round-trip test)
+	result, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Build() error = %v", err)
+	}
+	
+	if result != expectedAfterParse {
+		t.Errorf("Build() after parse = %q, want %q", result, expectedAfterParse)
+	}
+
+	// Now add a new filter and verify it's added correctly
+	builder = builder.Filter(ddqb.Filter("service").Equal("api"))
+	
+	result, err = builder.Build()
+	if err != nil {
+		t.Fatalf("Build() after adding filter error = %v", err)
+	}
+
+	if result != expectedAfterAddingFilter {
+		t.Errorf("Build() after adding filter = %q, want %q", result, expectedAfterAddingFilter)
+	}
+}
+
+func TestParseComplexNestedFiltersWithORNOT(t *testing.T) {
+	// Test parsing a complex query with OR NOT as well
+	// Starting query: env:prod OR NOT (host:web-1) AND (region:us-east-1 OR region:us-west-2)
+	queryString := "avg(5m):system.cpu.idle{env:prod OR NOT (host:web-1) AND (region:us-east-1 OR region:us-west-2)}"
+	expectedAfterParse := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
+	expectedAfterAddingFilter := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)) AND team:backend)}"
+	
+	builder, err := metric.ParseQuery(queryString)
+	if err != nil {
+		t.Fatalf("ParseQuery() error = %v", err)
+	}
+
+	// Verify the parsed query can be rebuilt
+	result, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Build() error = %v", err)
+	}
+	
+	if result != expectedAfterParse {
+		t.Errorf("Build() after parse = %q, want %q", result, expectedAfterParse)
+	}
+
+	// Add a new filter
+	builder = builder.Filter(ddqb.Filter("team").Equal("backend"))
+	
+	result, err = builder.Build()
+	if err != nil {
+		t.Fatalf("Build() after adding filter error = %v", err)
+	}
+
+	if result != expectedAfterAddingFilter {
+		t.Errorf("Build() after adding filter = %q, want %q", result, expectedAfterAddingFilter)
+	}
+}
+
+
+func TestGetFiltersAndModifyGroups(t *testing.T) {
+	queryString := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
+	builder, _ := metric.ParseQuery(queryString)
+	
+	// Access filters directly
+	filters := builder.GetFilters()
+	if len(filters) == 0 {
+		t.Fatal("Expected at least one filter")
+	}
+	
+	// Modify the first group directly
+	if group, ok := filters[0].(metric.FilterGroupBuilder); ok {
+		group.AND(ddqb.Filter("service").Equal("api"))
+	}
+	
+	result, _ := builder.Build()
+	expected := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)) AND service:api)}"
+	if result != expected {
+		t.Errorf("Build() after direct modification = %q, want %q", result, expected)
+	}
+}
+
+func TestAddFilterToDeepestNestedGroup(t *testing.T) {
+	queryString := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
+	expected := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2 AND region:ap-southeast-2)))}"
+	
+	builder, err := metric.ParseQuery(queryString)
+	if err != nil {
+		t.Fatalf("ParseQuery() error = %v", err)
+	}
+
+	// Find the deepest group by searching for a group that contains both region filters
+	// and whose Build() output matches the pattern of the deepest nested group
+	// The deepest group should build to exactly "(region:us-east-1 AND region:us-west-2)"
+	deepestGroup := builder.FindGroup(func(g metric.FilterGroupBuilder) bool {
+		built, _ := g.Build()
+		// The deepest group should contain both region filters and not have nested parentheses
+		// We check if the built string is exactly "(region:us-east-1 AND region:us-west-2)"
+		// or starts with that pattern
+		hasBothRegions := contains(built, "region:us-east-1") && contains(built, "region:us-west-2")
+		if !hasBothRegions {
+			return false
+		}
+		// Check if this is a simple group (no nested parentheses after the opening paren)
+		// by looking for the pattern: starts with "(" and contains both regions without nested "("
+		opensWithParen := len(built) > 0 && built[0] == '('
+		if !opensWithParen {
+			return false
+		}
+		// Check for nested parentheses - if we find a "(" after the first one (and not part of "NOT"),
+		// this is not the deepest group
+		foundNestedParen := false
+		for i := 1; i < len(built); i++ {
+			if built[i] == '(' && built[i-1] != 'N' {
+				foundNestedParen = true
+				break
+			}
+		}
+		// The deepest group should not have nested parentheses
+		return !foundNestedParen
+	})
+	
+	if deepestGroup == nil {
+		t.Fatal("Expected to find a deepest nested group")
+	}
+	
+	// Add filter to the deepest group
+	builder = builder.AddToGroup(deepestGroup, ddqb.Filter("region").Equal("ap-southeast-2"))
+	
+	result, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Build() error = %v", err)
+	}
+	
+	if result != expected {
+		t.Errorf("Build() after adding to deepest group = %q, want %q", result, expected)
+	}
+}
+
+// Helper function to check if a string contains a substring
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) && 
+		(s == substr || 
+		 (len(s) > len(substr) && 
+		  (s[:len(substr)] == substr || 
+		   s[len(s)-len(substr):] == substr ||
+		   findInMiddle(s, substr))))
+}
+
+func findInMiddle(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
+}
+
+func TestFindGroupAndAddToGroup(t *testing.T) {
+	queryString := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)))}"
+	builder, _ := metric.ParseQuery(queryString)
+	
+	// Find any group (first one found)
+	group := builder.FindGroup(func(g metric.FilterGroupBuilder) bool {
+		return true // Find first group
+	})
+	
+	if group == nil {
+		t.Fatal("Expected to find a group")
+	}
+	
+	// Add filter to the found group
+	builder = builder.AddToGroup(group, ddqb.Filter("region").Equal("us-west-1"))
+	
+	result, _ := builder.Build()
+	expected := "avg(5m):system.cpu.idle{(env:prod AND (host:web-1 AND (region:us-east-1 AND region:us-west-2)) AND region:us-west-1)}"
+	if result != expected {
+		t.Errorf("Build() after FindGroup + AddToGroup = %q, want %q", result, expected)
+	}
+}

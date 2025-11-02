@@ -72,37 +72,102 @@ func ParseQuery(queryString string) (MetricQueryBuilder, error) {
 	return builder, nil
 }
 
-// convertFilters converts DDQP filter structures to DDQB FilterBuilder instances
-func convertFilters(mf *ddqp.MetricFilter) ([]FilterBuilder, error) {
-	var filters []FilterBuilder
+// convertFilters converts DDQP filter structures to DDQB FilterExpression instances
+func convertFilters(mf *ddqp.MetricFilter) ([]FilterExpression, error) {
+	var expressions []FilterExpression
+	var currentGroup *filterGroupBuilder
+	var groupOperator GroupOperator
 
-	// Handle the left parameter
+	// Process left parameter if present
 	if mf.Left != nil {
-		filter, err := convertParam(mf.Left)
+		expr, err := convertParam(mf.Left)
 		if err != nil {
 			return nil, err
 		}
-		if filter != nil {
-			filters = append(filters, filter)
+		if expr != nil {
+			expressions = append(expressions, expr)
 		}
 	}
 
-	// Handle additional parameters
+	// Process additional parameters, tracking separators to build groups
 	for _, param := range mf.Parameters {
-		filter, err := convertParam(param)
+		// Check if this is a separator
+		if param.Separator != nil {
+			// Only create groups for explicit AND/OR operators, not for commas
+			// Commas represent implicit AND and should remain as separate expressions
+			if param.Separator.And {
+				// Start or continue an AND group
+				if currentGroup == nil {
+					// Start a new group
+					currentGroup = &filterGroupBuilder{
+						expressions: make([]FilterExpression, 0),
+						operator:    AndOperator,
+						negated:     false,
+					}
+					// Move the last expression into the group if there is one
+					if len(expressions) > 0 {
+						currentGroup.expressions = append(currentGroup.expressions, expressions[len(expressions)-1])
+						expressions = expressions[:len(expressions)-1]
+					}
+				}
+				groupOperator = AndOperator
+				currentGroup.operator = AndOperator
+			} else if param.Separator.Or {
+				// Start or continue an OR group
+				if currentGroup == nil {
+					// Start a new group
+					currentGroup = &filterGroupBuilder{
+						expressions: make([]FilterExpression, 0),
+						operator:    OrOperator,
+						negated:     false,
+					}
+					// Move the last expression into the group if there is one
+					if len(expressions) > 0 {
+						currentGroup.expressions = append(currentGroup.expressions, expressions[len(expressions)-1])
+						expressions = expressions[:len(expressions)-1]
+					}
+				}
+				groupOperator = OrOperator
+				currentGroup.operator = OrOperator
+			}
+			// For commas, we don't create groups - they remain as separate expressions
+			// which will be joined with commas (implicit AND) in the Build() method
+			continue
+		}
+
+		// Convert the parameter to an expression
+		expr, err := convertParam(param)
 		if err != nil {
 			return nil, err
 		}
-		if filter != nil {
-			filters = append(filters, filter)
+		if expr == nil {
+			continue
+		}
+
+		// Add to current group or as standalone expression
+		if currentGroup != nil {
+			// Add to current group with the appropriate operator
+			if groupOperator == AndOperator {
+				currentGroup.AND(expr)
+			} else {
+				currentGroup.OR(expr)
+			}
+		} else {
+			// Standalone expression (will be joined with commas for implicit AND)
+			expressions = append(expressions, expr)
 		}
 	}
 
-	return filters, nil
+	// Close any open group
+	if currentGroup != nil {
+		expressions = append(expressions, currentGroup)
+	}
+
+	return expressions, nil
 }
 
-// convertParam converts a DDQP Param to a DDQB FilterBuilder
-func convertParam(param *ddqp.Param) (FilterBuilder, error) {
+// convertParam converts a DDQP Param to a DDQB FilterExpression
+func convertParam(param *ddqp.Param) (FilterExpression, error) {
 	if param == nil {
 		return nil, nil
 	}
@@ -117,35 +182,74 @@ func convertParam(param *ddqp.Param) (FilterBuilder, error) {
 		return convertSimpleFilter(param.SimpleFilter)
 	}
 
-	// Handle grouped filters - for now, we'll extract simple filters from them
-	// Complex AND/OR logic in grouped filters is not fully supported in DDQB yet
+	// Handle grouped filters - recursively convert with proper AND/OR logic
 	if param.GroupedFilter != nil {
-		// Extract filters from grouped filter
-		var filters []FilterBuilder
-		for _, p := range param.GroupedFilter.Parameters {
-			if p.SimpleFilter != nil {
-				filter, err := convertSimpleFilter(p.SimpleFilter)
-				if err != nil {
-					return nil, err
-				}
-				if filter != nil {
-					filters = append(filters, filter)
-				}
-			}
-		}
-		// For now, we'll return the first filter or handle it differently
-		// TODO: Properly handle grouped filters with AND/OR logic
-		if len(filters) > 0 {
-			return filters[0], nil
-		}
+		return convertGroupedFilter(param.GroupedFilter)
 	}
 
-	// Handle separator (comma, AND, OR, etc.) - these are just separators, not filters
+	// Handle separator (comma, AND, OR, etc.) - these are handled in convertFilters
 	if param.Separator != nil {
 		return nil, nil
 	}
 
 	return nil, nil
+}
+
+// convertGroupedFilter converts a DDQP GroupedFilter to a DDQB FilterGroupBuilder
+func convertGroupedFilter(gf *ddqp.GroupedFilter) (FilterExpression, error) {
+	if gf == nil {
+		return nil, nil
+	}
+
+	group := NewFilterGroupBuilder()
+	var currentOperator GroupOperator = AndOperator // Default to AND
+
+	// Process parameters in the grouped filter
+	for i, param := range gf.Parameters {
+		// Check for separator to determine operator
+		if param.Separator != nil {
+			if param.Separator.And || param.Separator.Comma {
+				currentOperator = AndOperator
+			} else if param.Separator.Or {
+				currentOperator = OrOperator
+			}
+			continue
+		}
+
+		// Convert parameter to expression
+		expr, err := convertParam(param)
+		if err != nil {
+			return nil, err
+		}
+		if expr == nil {
+			continue
+		}
+
+		// Add to group with appropriate operator
+		if i == 0 {
+			// First expression determines the group operator
+			if currentOperator == AndOperator {
+				group.AND(expr)
+			} else {
+				group.OR(expr)
+			}
+		} else {
+			// Subsequent expressions use the current operator
+			if currentOperator == AndOperator {
+				group.AND(expr)
+			} else {
+				group.OR(expr)
+			}
+		}
+	}
+
+	// Check if group has any expressions
+	groupImpl := group.(*filterGroupBuilder)
+	if len(groupImpl.expressions) == 0 {
+		return nil, nil
+	}
+
+	return group, nil
 }
 
 // convertSimpleFilter converts a DDQP SimpleFilter to a DDQB FilterBuilder

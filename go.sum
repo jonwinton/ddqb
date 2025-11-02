@@ -8,8 +8,6 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
 github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
-github.com/jonwinton/ddqp v0.0.0-20251031203452-5e390ec7dae7 h1:c8EpAqx02isO+jA/iO1oq9VCmYJDVGViqmgOd2Qjvak=
-github.com/jonwinton/ddqp v0.0.0-20251031203452-5e390ec7dae7/go.mod h1:xD0sNL/4FQgdWTD6mkq/AsXTvsrXXXGFDthFSxb+tyI=
 github.com/jonwinton/ddqp v0.1.0 h1:PpHjDi8Ku211EfBtNXmWeXvtxf5Vbz2LWLGE0BbS6UE=
 github.com/jonwinton/ddqp v0.1.0/go.mod h1:xD0sNL/4FQgdWTD6mkq/AsXTvsrXXXGFDthFSxb+tyI=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

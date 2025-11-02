@@ -21,6 +21,12 @@ func Function(name string) metric.FunctionBuilder {
 	return metric.NewFunctionBuilder(name)
 }
 
+// FilterGroup creates a new filter group builder.
+// This is a convenience function for creating filter group builders.
+func FilterGroup() metric.FilterGroupBuilder {
+	return metric.NewFilterGroupBuilder()
+}
+
 // FromQuery parses an existing DataDog query string and returns a MetricQueryBuilder
 // that can be modified using the fluent API.
 //
