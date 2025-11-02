@@ -20,3 +20,17 @@ func Filter(key string) metric.FilterBuilder {
 func Function(name string) metric.FunctionBuilder {
 	return metric.NewFunctionBuilder(name)
 }
+
+// FromQuery parses an existing DataDog query string and returns a MetricQueryBuilder
+// that can be modified using the fluent API.
+//
+// Example:
+//
+//	builder, err := ddqb.FromQuery("avg(5m):system.cpu.idle{host:web-1} by {host}.fill(0)")
+//	if err != nil {
+//		// handle error
+//	}
+//	modifiedQuery, err := builder.TimeWindow("10m").Filter(ddqb.Filter("env").Equal("prod")).Build()
+func FromQuery(queryString string) (metric.MetricQueryBuilder, error) {
+	return metric.ParseQuery(queryString)
+}

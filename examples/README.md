@@ -18,6 +18,9 @@ cd functions && go run main.go
 
 # Run the advanced usage examples
 cd advanced && go run main.go
+
+# Run the parse and modify examples
+cd parse && go run main.go
 ```
 
 ## Examples Overview
@@ -29,8 +32,8 @@ Demonstrates the core functionality of DDQB with several examples showing how to
 ### 2. Filter Examples
 
 Focuses on the different filter operations supported by DDQB:
+
 - Equal / Not Equal filters
-- Greater Than / Less Than filters
 - Regex filters
 - IN / NOT IN filters
 - Multiple filters combined
@@ -38,6 +41,7 @@ Focuses on the different filter operations supported by DDQB:
 ### 3. Function Examples
 
 Showcases how to apply various functions to metric queries:
+
 - fill()
 - rollup()
 - moving_average()
@@ -47,10 +51,20 @@ Showcases how to apply various functions to metric queries:
 ### 4. Advanced Examples
 
 Demonstrates more complex use cases and patterns:
+
 - Dynamic query building based on runtime conditions
 - Utility functions for common query patterns
 - Converting between formats (e.g., glob to regex)
 - Handling different parameter types
+
+### 5. Parse Examples
+
+Demonstrates how to parse existing DataDog query strings and modify them:
+
+- Parsing simple queries and adding filters
+- Parsing complex queries and modifying components (time windows, aggregators, functions)
+- Parsing queries with various filter types (regex, IN, NOT IN)
+- Round-trip parsing and rebuilding queries
 
 ## Example Output
 
