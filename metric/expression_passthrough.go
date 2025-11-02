@@ -222,15 +222,15 @@ func applyFiltersToMetricQuery(mq *ddqp.MetricQuery, params []*ddqp.Param) error
 	if mq == nil {
 		return nil
 	}
-    if mq.Query != nil {
+	if mq.Query != nil {
 		q := mq.Query
 		if q.Filters == nil {
 			q.Filters = &ddqp.MetricFilter{Left: &ddqp.Param{Asterisk: true}}
 		}
-        q.Filters.Parameters = append(q.Filters.Parameters, params...)
-        if hasExplicitOpsAndComma(q.Filters) {
-            normalizeMetricFilterToExplicit(q.Filters)
-        }
+		q.Filters.Parameters = append(q.Filters.Parameters, params...)
+		if hasExplicitOpsAndComma(q.Filters) {
+			normalizeMetricFilterToExplicit(q.Filters)
+		}
 		return nil
 	}
 	if mq.AggregatorFuction != nil && mq.AggregatorFuction.Body != nil {
@@ -243,162 +243,162 @@ func applyFiltersToMetricQuery(mq *ddqp.MetricQuery, params []*ddqp.Param) error
 // simple filter negatives (!) to NOT separators. It also rewrites the entire
 // filter into a single grouped filter to allow a leading NOT.
 func normalizeMetricFilterToExplicit(mf *ddqp.MetricFilter) {
-    if mf == nil || mf.Left == nil {
-        return
-    }
+	if mf == nil || mf.Left == nil {
+		return
+	}
 
-    gf := &ddqp.GroupedFilter{Parameters: []*ddqp.Param{}}
+	gf := &ddqp.GroupedFilter{Parameters: []*ddqp.Param{}}
 
-    // Helper to append a NOT before a simple filter if it was negated
-    appendParamWithNotIfNeeded := func(p *ddqp.Param) {
-        if p.SimpleFilter != nil && p.SimpleFilter.Negative {
-            p.SimpleFilter.Negative = false
-            gf.Parameters = append(gf.Parameters, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
-        }
-        gf.Parameters = append(gf.Parameters, p)
-    }
+	// Helper to append a NOT before a simple filter if it was negated
+	appendParamWithNotIfNeeded := func(p *ddqp.Param) {
+		if p.SimpleFilter != nil && p.SimpleFilter.Negative {
+			p.SimpleFilter.Negative = false
+			gf.Parameters = append(gf.Parameters, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
+		}
+		gf.Parameters = append(gf.Parameters, p)
+	}
 
-    // Process Left
-    left := cloneParam(mf.Left)
-    normalizeParam(left)
-    appendParamWithNotIfNeeded(left)
+	// Process Left
+	left := cloneParam(mf.Left)
+	normalizeParam(left)
+	appendParamWithNotIfNeeded(left)
 
-    // Process Parameters
-    for _, p := range mf.Parameters {
-        np := cloneParam(p)
-        // Convert commas to AND
-        if np.Separator != nil && np.Separator.Comma {
-            np.Separator.Comma = false
-            np.Separator.And = true
-        }
-        // Keep other separators as-is (AND/OR/NOT variants)
-        // If this element is a negated simple filter, move negation to NOT separator
-        if np.SimpleFilter != nil && np.SimpleFilter.Negative {
-            np.SimpleFilter.Negative = false
-            gf.Parameters = append(gf.Parameters, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
-        }
-        normalizeParam(np)
-        gf.Parameters = append(gf.Parameters, np)
-    }
+	// Process Parameters
+	for _, p := range mf.Parameters {
+		np := cloneParam(p)
+		// Convert commas to AND
+		if np.Separator != nil && np.Separator.Comma {
+			np.Separator.Comma = false
+			np.Separator.And = true
+		}
+		// Keep other separators as-is (AND/OR/NOT variants)
+		// If this element is a negated simple filter, move negation to NOT separator
+		if np.SimpleFilter != nil && np.SimpleFilter.Negative {
+			np.SimpleFilter.Negative = false
+			gf.Parameters = append(gf.Parameters, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
+		}
+		normalizeParam(np)
+		gf.Parameters = append(gf.Parameters, np)
+	}
 
-    // Rewrite mf to a single grouped filter
-    mf.Left = &ddqp.Param{GroupedFilter: gf}
-    mf.Parameters = nil
+	// Rewrite mf to a single grouped filter
+	mf.Left = &ddqp.Param{GroupedFilter: gf}
+	mf.Parameters = nil
 }
 
 // hasExplicitOpsAndComma returns true if the filter contains both any explicit
 // boolean separators (AND/OR/NOT variants) and any comma separators.
 func hasExplicitOpsAndComma(mf *ddqp.MetricFilter) bool {
-    if mf == nil {
-        return false
-    }
-    hasExplicit := false
-    hasComma := false
+	if mf == nil {
+		return false
+	}
+	hasExplicit := false
+	hasComma := false
 
-    var scanParam func(p *ddqp.Param)
-    scanParam = func(p *ddqp.Param) {
-        if p == nil {
-            return
-        }
-        if p.Separator != nil {
-            if p.Separator.Comma {
-                hasComma = true
-            }
-            if p.Separator.And || p.Separator.Or || p.Separator.AndNot || p.Separator.OrNot || p.Separator.Not {
-                hasExplicit = true
-            }
-        }
-        if p.GroupedFilter != nil {
-            for _, sp := range p.GroupedFilter.Parameters {
-                scanParam(sp)
-            }
-        }
-    }
+	var scanParam func(p *ddqp.Param)
+	scanParam = func(p *ddqp.Param) {
+		if p == nil {
+			return
+		}
+		if p.Separator != nil {
+			if p.Separator.Comma {
+				hasComma = true
+			}
+			if p.Separator.And || p.Separator.Or || p.Separator.AndNot || p.Separator.OrNot || p.Separator.Not {
+				hasExplicit = true
+			}
+		}
+		if p.GroupedFilter != nil {
+			for _, sp := range p.GroupedFilter.Parameters {
+				scanParam(sp)
+			}
+		}
+	}
 
-    scanParam(mf.Left)
-    for _, p := range mf.Parameters {
-        scanParam(p)
-    }
+	scanParam(mf.Left)
+	for _, p := range mf.Parameters {
+		scanParam(p)
+	}
 
-    return hasExplicit && hasComma
+	return hasExplicit && hasComma
 }
 
 func normalizeParam(p *ddqp.Param) {
-    if p == nil {
-        return
-    }
-    if p.GroupedFilter != nil {
-        normalizeGroupedFilter(p.GroupedFilter)
-    }
-    if p.SimpleFilter != nil {
-        // value stays; handled in placement to insert NOT when needed
-        // nothing else to do here
-        return
-    }
+	if p == nil {
+		return
+	}
+	if p.GroupedFilter != nil {
+		normalizeGroupedFilter(p.GroupedFilter)
+	}
+	if p.SimpleFilter != nil {
+		// value stays; handled in placement to insert NOT when needed
+		// nothing else to do here
+		return
+	}
 }
 
 func normalizeGroupedFilter(gf *ddqp.GroupedFilter) {
-    if gf == nil {
-        return
-    }
-    params := []*ddqp.Param{}
+	if gf == nil {
+		return
+	}
+	params := []*ddqp.Param{}
 
-    // First element may need leading NOT if negated simple filter
-    if len(gf.Parameters) > 0 {
-        first := cloneParam(gf.Parameters[0])
-        if first.SimpleFilter != nil && first.SimpleFilter.Negative {
-            first.SimpleFilter.Negative = false
-            params = append(params, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
-        }
-        normalizeParam(first)
-        params = append(params, first)
-    }
+	// First element may need leading NOT if negated simple filter
+	if len(gf.Parameters) > 0 {
+		first := cloneParam(gf.Parameters[0])
+		if first.SimpleFilter != nil && first.SimpleFilter.Negative {
+			first.SimpleFilter.Negative = false
+			params = append(params, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
+		}
+		normalizeParam(first)
+		params = append(params, first)
+	}
 
-    // Remaining elements: convert commas to AND, normalize recursively
-    for i := 1; i < len(gf.Parameters); i++ {
-        np := cloneParam(gf.Parameters[i])
-        if np.Separator != nil && np.Separator.Comma {
-            np.Separator.Comma = false
-            np.Separator.And = true
-        }
-        // If this element is a negated simple filter and separator isn't a NOT variant, insert NOT
-        if np.SimpleFilter != nil && np.SimpleFilter.Negative {
-            np.SimpleFilter.Negative = false
-            // Insert NOT separator before the filter
-            params = append(params, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
-        }
-        normalizeParam(np)
-        params = append(params, np)
-    }
+	// Remaining elements: convert commas to AND, normalize recursively
+	for i := 1; i < len(gf.Parameters); i++ {
+		np := cloneParam(gf.Parameters[i])
+		if np.Separator != nil && np.Separator.Comma {
+			np.Separator.Comma = false
+			np.Separator.And = true
+		}
+		// If this element is a negated simple filter and separator isn't a NOT variant, insert NOT
+		if np.SimpleFilter != nil && np.SimpleFilter.Negative {
+			np.SimpleFilter.Negative = false
+			// Insert NOT separator before the filter
+			params = append(params, &ddqp.Param{Separator: &ddqp.FilterValueSeparator{Not: true}})
+		}
+		normalizeParam(np)
+		params = append(params, np)
+	}
 
-    gf.Parameters = params
+	gf.Parameters = params
 }
 
 // cloneParam performs a shallow clone suitable for safe in-place normalization
 func cloneParam(p *ddqp.Param) *ddqp.Param {
-    if p == nil {
-        return nil
-    }
-    cp := &ddqp.Param{}
-    if p.Separator != nil {
-        s := *p.Separator
-        cp.Separator = &s
-    }
-    if p.GroupedFilter != nil {
-        // deep-ish clone for nested structure
-        ng := &ddqp.GroupedFilter{Parameters: []*ddqp.Param{}}
-        for _, sub := range p.GroupedFilter.Parameters {
-            ng.Parameters = append(ng.Parameters, cloneParam(sub))
-        }
-        cp.GroupedFilter = ng
-    }
-    if p.SimpleFilter != nil {
-        sf := *p.SimpleFilter
-        // FilterValue and FilterSeparator can be reused safely as we only mutate booleans
-        cp.SimpleFilter = &sf
-    }
-    if p.Asterisk {
-        cp.Asterisk = true
-    }
-    return cp
+	if p == nil {
+		return nil
+	}
+	cp := &ddqp.Param{}
+	if p.Separator != nil {
+		s := *p.Separator
+		cp.Separator = &s
+	}
+	if p.GroupedFilter != nil {
+		// deep-ish clone for nested structure
+		ng := &ddqp.GroupedFilter{Parameters: []*ddqp.Param{}}
+		for _, sub := range p.GroupedFilter.Parameters {
+			ng.Parameters = append(ng.Parameters, cloneParam(sub))
+		}
+		cp.GroupedFilter = ng
+	}
+	if p.SimpleFilter != nil {
+		sf := *p.SimpleFilter
+		// FilterValue and FilterSeparator can be reused safely as we only mutate booleans
+		cp.SimpleFilter = &sf
+	}
+	if p.Asterisk {
+		cp.Asterisk = true
+	}
+	return cp
 }

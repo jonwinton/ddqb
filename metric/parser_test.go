@@ -1,11 +1,11 @@
 package metric_test
 
 import (
-    "strings"
-    "testing"
+	"strings"
+	"testing"
 
-    "github.com/jonwinton/ddqb"
-    "github.com/jonwinton/ddqb/metric"
+	"github.com/jonwinton/ddqb"
+	"github.com/jonwinton/ddqb/metric"
 )
 
 func TestParseQuery(t *testing.T) {
@@ -449,72 +449,72 @@ func TestFindGroupAndAddToGroup(t *testing.T) {
 }
 
 func TestExpressionNormalization_MixedAndComma(t *testing.T) {
-    // Start with an expression containing comma-style filters and a negation
-    query := "top(system.cpu.idle{host:web-1, env:staging, !region:us-west-2}, 1, 'max', 'desc')"
-    builder, err := metric.ParseQuery(query)
-    if err != nil {
-        t.Fatalf("ParseQuery() error = %v", err)
-    }
+	// Start with an expression containing comma-style filters and a negation
+	query := "top(system.cpu.idle{host:web-1, env:staging, !region:us-west-2}, 1, 'max', 'desc')"
+	builder, err := metric.ParseQuery(query)
+	if err != nil {
+		t.Fatalf("ParseQuery() error = %v", err)
+	}
 
-    // Add a filter group using explicit OR, which mixes styles
-    fg := metric.NewFilterGroupBuilder()
-    fg.OR(ddqb.Filter("service").Equal("api"))
-    fg.OR(ddqb.Filter("team").Equal("backend"))
-    builder = builder.Filter(fg)
+	// Add a filter group using explicit OR, which mixes styles
+	fg := metric.NewFilterGroupBuilder()
+	fg.OR(ddqb.Filter("service").Equal("api"))
+	fg.OR(ddqb.Filter("team").Equal("backend"))
+	builder = builder.Filter(fg)
 
-    out, err := builder.Build()
-    if err != nil {
-        t.Fatalf("Build() error = %v", err)
-    }
+	out, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Build() error = %v", err)
+	}
 
-    // Expect explicit boolean style inside braces (no commas), and NOT for negation
-    // Extract the first filter block {...}
-    start := strings.Index(out, "{")
-    end := strings.Index(out[start+1:], "}")
-    var filterBlock string
-    if start != -1 && end != -1 {
-        filterBlock = out[start : start+end+2]
-    } else {
-        filterBlock = out
-    }
-    if contains(filterBlock, ",") {
-        t.Errorf("expected no commas after normalization, got: %s", out)
-    }
-    if !contains(filterBlock, " AND ") {
-        t.Errorf("expected AND separators after normalization, got: %s", out)
-    }
-    if !contains(filterBlock, " NOT ") {
-        t.Errorf("expected NOT for negations after normalization, got: %s", out)
-    }
+	// Expect explicit boolean style inside braces (no commas), and NOT for negation
+	// Extract the first filter block {...}
+	start := strings.Index(out, "{")
+	end := strings.Index(out[start+1:], "}")
+	var filterBlock string
+	if start != -1 && end != -1 {
+		filterBlock = out[start : start+end+2]
+	} else {
+		filterBlock = out
+	}
+	if contains(filterBlock, ",") {
+		t.Errorf("expected no commas after normalization, got: %s", out)
+	}
+	if !contains(filterBlock, " AND ") {
+		t.Errorf("expected AND separators after normalization, got: %s", out)
+	}
+	if !contains(filterBlock, " NOT ") {
+		t.Errorf("expected NOT for negations after normalization, got: %s", out)
+	}
 }
 
 func TestExpressionNormalization_DefaultCommaWhenNoExplicit(t *testing.T) {
-    // Expression with comma filters; append a simple filter (no explicit group)
-    query := "top(system.cpu.idle{host:web-1, env:staging}, 1, 'max', 'desc')"
-    builder, err := metric.ParseQuery(query)
-    if err != nil {
-        t.Fatalf("ParseQuery() error = %v", err)
-    }
+	// Expression with comma filters; append a simple filter (no explicit group)
+	query := "top(system.cpu.idle{host:web-1, env:staging}, 1, 'max', 'desc')"
+	builder, err := metric.ParseQuery(query)
+	if err != nil {
+		t.Fatalf("ParseQuery() error = %v", err)
+	}
 
-    builder = builder.Filter(ddqb.Filter("region").Equal("us-west-2"))
-    out, err := builder.Build()
-    if err != nil {
-        t.Fatalf("Build() error = %v", err)
-    }
+	builder = builder.Filter(ddqb.Filter("region").Equal("us-west-2"))
+	out, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Build() error = %v", err)
+	}
 
-    // Should remain comma style (no AND), as there was no explicit boolean usage
-    start := strings.Index(out, "{")
-    end := strings.Index(out[start+1:], "}")
-    var filterBlock string
-    if start != -1 && end != -1 {
-        filterBlock = out[start : start+end+2]
-    } else {
-        filterBlock = out
-    }
-    if !contains(filterBlock, ",") {
-        t.Errorf("expected commas to remain when no explicit boolean operators, got: %s", out)
-    }
-    if contains(filterBlock, " AND ") {
-        t.Errorf("did not expect AND when no explicit boolean operators, got: %s", out)
-    }
+	// Should remain comma style (no AND), as there was no explicit boolean usage
+	start := strings.Index(out, "{")
+	end := strings.Index(out[start+1:], "}")
+	var filterBlock string
+	if start != -1 && end != -1 {
+		filterBlock = out[start : start+end+2]
+	} else {
+		filterBlock = out
+	}
+	if !contains(filterBlock, ",") {
+		t.Errorf("expected commas to remain when no explicit boolean operators, got: %s", out)
+	}
+	if contains(filterBlock, " AND ") {
+		t.Errorf("did not expect AND when no explicit boolean operators, got: %s", out)
+	}
 }
