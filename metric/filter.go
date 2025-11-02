@@ -5,6 +5,13 @@ import (
 	"strings"
 )
 
+// FilterExpression is a common interface for both individual filters and filter groups.
+// This allows MetricQueryBuilder to accept either FilterBuilder or FilterGroupBuilder instances.
+type FilterExpression interface {
+	// Build returns the built filter expression as a string.
+	Build() (string, error)
+}
+
 // FilterOperation represents the type of filter operation.
 type FilterOperation int
 
@@ -22,7 +29,10 @@ const (
 )
 
 // FilterBuilder provides a fluent interface for building filter conditions.
+// FilterBuilder implements FilterExpression.
 type FilterBuilder interface {
+	FilterExpression
+
 	// Equal creates an equality filter (key:value).
 	Equal(value string) FilterBuilder
 
@@ -37,9 +47,6 @@ type FilterBuilder interface {
 
 	// NotIn creates a NOT IN filter.
 	NotIn(values ...string) FilterBuilder
-
-	// Build returns the built filter as a string.
-	Build() (string, error)
 }
 
 // filterBuilder is the concrete implementation of the FilterBuilder interface.
