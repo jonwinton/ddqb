@@ -20,11 +20,11 @@ const (
 type FilterGroupBuilder interface {
 	FilterExpression
 
-	// AND adds a filter or nested group with AND operator.
-	AND(expr FilterExpression) FilterGroupBuilder
+	// And adds a filter or nested group with AND operator.
+	And(expr FilterExpression) FilterGroupBuilder
 
-	// OR adds a filter or nested group with OR operator.
-	OR(expr FilterExpression) FilterGroupBuilder
+	// Or adds a filter or nested group with OR operator.
+	Or(expr FilterExpression) FilterGroupBuilder
 
 	// Not negates the entire group (wraps in NOT (...)).
 	Not() FilterGroupBuilder
@@ -46,9 +46,9 @@ func NewFilterGroupBuilder() FilterGroupBuilder {
 	}
 }
 
-// AND adds a filter or nested group with AND operator.
+// And adds a filter or nested group with AND operator.
 // Sets the group operator to AND if this is the first expression added.
-func (b *filterGroupBuilder) AND(expr FilterExpression) FilterGroupBuilder {
+func (b *filterGroupBuilder) And(expr FilterExpression) FilterGroupBuilder {
 	if len(b.expressions) == 0 {
 		// First expression - set operator to AND
 		b.operator = AndOperator
@@ -61,9 +61,9 @@ func (b *filterGroupBuilder) AND(expr FilterExpression) FilterGroupBuilder {
 	return b
 }
 
-// OR adds a filter or nested group with OR operator.
+// Or adds a filter or nested group with OR operator.
 // Sets the group operator to OR if this is the first expression added.
-func (b *filterGroupBuilder) OR(expr FilterExpression) FilterGroupBuilder {
+func (b *filterGroupBuilder) Or(expr FilterExpression) FilterGroupBuilder {
 	if len(b.expressions) == 0 {
 		// First expression - set operator to OR
 		b.operator = OrOperator

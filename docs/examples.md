@@ -64,8 +64,8 @@ q, err := ddqb.Metric().
 
 ```go
 group := ddqb.FilterGroup().
-  OR(ddqb.Filter("availability-zone").Equal("us-east-1a")).
-  OR(ddqb.Filter("availability-zone").Equal("us-east-1c"))
+  Or(ddqb.Filter("availability-zone").Equal("us-east-1a")).
+  Or(ddqb.Filter("availability-zone").Equal("us-east-1c"))
 
 q, err := ddqb.Metric().
   Metric("system.cpu.user").
@@ -79,11 +79,11 @@ q, err := ddqb.Metric().
 
 ```go
 complexGroup := ddqb.FilterGroup().
-  AND(ddqb.Filter("team").Equal("core")).
-  AND(
+  And(ddqb.Filter("team").Equal("core")).
+  And(
     ddqb.FilterGroup().
-      OR(ddqb.Filter("service").Equal("api")).
-      OR(ddqb.Filter("service").Equal("web")),
+      Or(ddqb.Filter("service").Equal("api")).
+      Or(ddqb.Filter("service").Equal("web")),
   )
 
 q, err := ddqb.Metric().

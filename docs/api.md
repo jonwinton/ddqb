@@ -257,11 +257,11 @@ FilterGroupBuilder provides a fluent interface for building filter groups with b
 type FilterGroupBuilder interface {
     FilterExpression
 
-    // AND adds a filter or nested group with AND operator.
-    AND(expr FilterExpression) FilterGroupBuilder
+    // And adds a filter or nested group with AND operator.
+    And(expr FilterExpression) FilterGroupBuilder
 
-    // OR adds a filter or nested group with OR operator.
-    OR(expr FilterExpression) FilterGroupBuilder
+    // Or adds a filter or nested group with OR operator.
+    Or(expr FilterExpression) FilterGroupBuilder
 
     // Not negates the entire group (wraps in NOT (...)).
     Not() FilterGroupBuilder

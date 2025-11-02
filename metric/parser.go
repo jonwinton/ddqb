@@ -151,9 +151,9 @@ func convertFilters(mf *ddqp.MetricFilter) ([]FilterExpression, error) {
 		if currentGroup != nil {
 			// Add to current group with the appropriate operator
 			if groupOperator == AndOperator {
-				currentGroup.AND(expr)
+				currentGroup.And(expr)
 			} else {
-				currentGroup.OR(expr)
+				currentGroup.Or(expr)
 			}
 		} else {
 			// Standalone expression (will be joined with commas for implicit AND)
@@ -230,9 +230,9 @@ func convertGroupedFilter(gf *ddqp.GroupedFilter) (FilterExpression, error) {
 
 		// Add to group with appropriate operator
 		if currentOperator == AndOperator {
-			group.AND(expr)
+			group.And(expr)
 		} else {
-			group.OR(expr)
+			group.Or(expr)
 		}
 	}
 

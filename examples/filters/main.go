@@ -82,8 +82,8 @@ func main() {
 	// Example 7: OR query
 	fmt.Println("Example 7: OR query")
 	orGroup := ddqb.FilterGroup()
-	orGroup.OR(ddqb.Filter("env").Equal("prod"))
-	orGroup.OR(ddqb.Filter("env").Equal("staging"))
+	orGroup.Or(ddqb.Filter("env").Equal("prod"))
+	orGroup.Or(ddqb.Filter("env").Equal("staging"))
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
 		Filter(orGroup).
@@ -96,11 +96,11 @@ func main() {
 	// Example 8: AND NOT query
 	fmt.Println("Example 8: AND NOT query")
 	andNotGroup := ddqb.FilterGroup()
-	andNotGroup.AND(ddqb.Filter("env").Equal("prod"))
+	andNotGroup.And(ddqb.Filter("env").Equal("prod"))
 	notGroup := ddqb.FilterGroup()
-	notGroup.AND(ddqb.Filter("host").Equal("web-1"))
+	notGroup.And(ddqb.Filter("host").Equal("web-1"))
 	notGroup.Not()
-	andNotGroup.AND(notGroup)
+	andNotGroup.And(notGroup)
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
 		Filter(andNotGroup).
@@ -113,11 +113,11 @@ func main() {
 	// Example 9: OR NOT query
 	fmt.Println("Example 9: OR NOT query")
 	orNotGroup := ddqb.FilterGroup()
-	orNotGroup.OR(ddqb.Filter("env").Equal("prod"))
+	orNotGroup.Or(ddqb.Filter("env").Equal("prod"))
 	notGroup2 := ddqb.FilterGroup()
-	notGroup2.AND(ddqb.Filter("host").Equal("web-1"))
+	notGroup2.And(ddqb.Filter("host").Equal("web-1"))
 	notGroup2.Not()
-	orNotGroup.OR(notGroup2)
+	orNotGroup.Or(notGroup2)
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
 		Filter(orNotGroup).
@@ -130,13 +130,13 @@ func main() {
 	// Example 10: Nested groups (AND with nested OR)
 	fmt.Println("Example 10: Nested groups (AND with nested OR)")
 	outerGroup := ddqb.FilterGroup()
-	outerGroup.AND(ddqb.Filter("env").Equal("prod"))
+	outerGroup.And(ddqb.Filter("env").Equal("prod"))
 
 	innerGroup := ddqb.FilterGroup()
-	innerGroup.OR(ddqb.Filter("host").Equal("web-1"))
-	innerGroup.OR(ddqb.Filter("host").Equal("web-2"))
+	innerGroup.Or(ddqb.Filter("host").Equal("web-1"))
+	innerGroup.Or(ddqb.Filter("host").Equal("web-2"))
 
-	outerGroup.AND(innerGroup)
+	outerGroup.And(innerGroup)
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
 		Filter(outerGroup).
@@ -149,16 +149,16 @@ func main() {
 	// Example 11: Complex nested groups
 	fmt.Println("Example 11: Complex nested groups")
 	envGroup := ddqb.FilterGroup()
-	envGroup.OR(ddqb.Filter("env").Equal("prod"))
-	envGroup.OR(ddqb.Filter("env").Equal("staging"))
+	envGroup.Or(ddqb.Filter("env").Equal("prod"))
+	envGroup.Or(ddqb.Filter("env").Equal("staging"))
 
 	hostGroup := ddqb.FilterGroup()
-	hostGroup.OR(ddqb.Filter("host").Regex("web-.*"))
-	hostGroup.OR(ddqb.Filter("host").Regex("api-.*"))
+	hostGroup.Or(ddqb.Filter("host").Regex("web-.*"))
+	hostGroup.Or(ddqb.Filter("host").Regex("api-.*"))
 
 	complexGroup := ddqb.FilterGroup()
-	complexGroup.AND(envGroup)
-	complexGroup.AND(hostGroup)
+	complexGroup.And(envGroup)
+	complexGroup.And(hostGroup)
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
 		Filter(complexGroup).
@@ -171,12 +171,12 @@ func main() {
 	// Example 12: Multiple groups combined (implicit AND)
 	fmt.Println("Example 12: Multiple groups combined (implicit AND)")
 	group1 := ddqb.FilterGroup()
-	group1.OR(ddqb.Filter("env").Equal("prod"))
-	group1.OR(ddqb.Filter("env").Equal("staging"))
+	group1.Or(ddqb.Filter("env").Equal("prod"))
+	group1.Or(ddqb.Filter("env").Equal("staging"))
 
 	group2 := ddqb.FilterGroup()
-	group2.OR(ddqb.Filter("region").Equal("us-east-1"))
-	group2.OR(ddqb.Filter("region").Equal("us-west-2"))
+	group2.Or(ddqb.Filter("region").Equal("us-east-1"))
+	group2.Or(ddqb.Filter("region").Equal("us-west-2"))
 
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").

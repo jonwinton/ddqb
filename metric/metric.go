@@ -108,9 +108,9 @@ func (b *metricQueryBuilder) AddToGroup(group FilterGroupBuilder, filter FilterE
 	// Cast to concrete type to modify
 	if groupImpl, ok := group.(*filterGroupBuilder); ok {
 		if groupImpl.operator == AndOperator {
-			groupImpl.AND(filter)
+			groupImpl.And(filter)
 		} else {
-			groupImpl.OR(filter)
+			groupImpl.Or(filter)
 		}
 	}
 	return b
@@ -191,7 +191,7 @@ func (b *metricQueryBuilder) Build() (string, error) {
 			// Wrap all filters in a group with explicit AND operators
 			group := NewFilterGroupBuilder()
 			for _, filter := range b.filters {
-				group.AND(filter)
+				group.And(filter)
 			}
 			groupStr, err := group.Build()
 			if err != nil {

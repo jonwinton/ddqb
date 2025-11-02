@@ -15,8 +15,8 @@ func TestFilterGroupBuilder_AND(t *testing.T) {
 			name: "simple AND group",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.AND(NewFilterBuilder("env").Equal("prod"))
-				group.AND(NewFilterBuilder("host").Equal("web-1"))
+				group.And(NewFilterBuilder("env").Equal("prod"))
+				group.And(NewFilterBuilder("host").Equal("web-1"))
 				return group.Build()
 			},
 			expected: "(env:prod AND host:web-1)",
@@ -26,9 +26,9 @@ func TestFilterGroupBuilder_AND(t *testing.T) {
 			name: "AND group with three filters",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.AND(NewFilterBuilder("env").Equal("prod"))
-				group.AND(NewFilterBuilder("host").Equal("web-1"))
-				group.AND(NewFilterBuilder("region").Equal("us-east-1"))
+				group.And(NewFilterBuilder("env").Equal("prod"))
+				group.And(NewFilterBuilder("host").Equal("web-1"))
+				group.And(NewFilterBuilder("region").Equal("us-east-1"))
 				return group.Build()
 			},
 			expected: "(env:prod AND host:web-1 AND region:us-east-1)",
@@ -38,7 +38,7 @@ func TestFilterGroupBuilder_AND(t *testing.T) {
 			name: "single filter in group",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.AND(NewFilterBuilder("env").Equal("prod"))
+				group.And(NewFilterBuilder("env").Equal("prod"))
 				return group.Build()
 			},
 			expected: "env:prod",
@@ -71,8 +71,8 @@ func TestFilterGroupBuilder_OR(t *testing.T) {
 			name: "simple OR group",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.OR(NewFilterBuilder("env").Equal("prod"))
-				group.OR(NewFilterBuilder("env").Equal("staging"))
+				group.Or(NewFilterBuilder("env").Equal("prod"))
+				group.Or(NewFilterBuilder("env").Equal("staging"))
 				return group.Build()
 			},
 			expected: "(env:prod OR env:staging)",
@@ -82,9 +82,9 @@ func TestFilterGroupBuilder_OR(t *testing.T) {
 			name: "OR group with three filters",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.OR(NewFilterBuilder("host").Equal("web-1"))
-				group.OR(NewFilterBuilder("host").Equal("web-2"))
-				group.OR(NewFilterBuilder("host").Equal("web-3"))
+				group.Or(NewFilterBuilder("host").Equal("web-1"))
+				group.Or(NewFilterBuilder("host").Equal("web-2"))
+				group.Or(NewFilterBuilder("host").Equal("web-3"))
 				return group.Build()
 			},
 			expected: "(host:web-1 OR host:web-2 OR host:web-3)",
@@ -117,8 +117,8 @@ func TestFilterGroupBuilder_Not(t *testing.T) {
 			name: "negated AND group",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.AND(NewFilterBuilder("env").Equal("prod"))
-				group.AND(NewFilterBuilder("host").Equal("web-1"))
+				group.And(NewFilterBuilder("env").Equal("prod"))
+				group.And(NewFilterBuilder("host").Equal("web-1"))
 				group.Not()
 				return group.Build()
 			},
@@ -129,8 +129,8 @@ func TestFilterGroupBuilder_Not(t *testing.T) {
 			name: "negated OR group",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.OR(NewFilterBuilder("env").Equal("prod"))
-				group.OR(NewFilterBuilder("env").Equal("staging"))
+				group.Or(NewFilterBuilder("env").Equal("prod"))
+				group.Or(NewFilterBuilder("env").Equal("staging"))
 				group.Not()
 				return group.Build()
 			},
@@ -141,7 +141,7 @@ func TestFilterGroupBuilder_Not(t *testing.T) {
 			name: "negated single filter",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.AND(NewFilterBuilder("env").Equal("prod"))
+				group.And(NewFilterBuilder("env").Equal("prod"))
 				group.Not()
 				return group.Build()
 			},
@@ -175,13 +175,13 @@ func TestFilterGroupBuilder_Nested(t *testing.T) {
 			name: "nested OR in AND",
 			build: func() (string, error) {
 				outerGroup := NewFilterGroupBuilder()
-				outerGroup.AND(NewFilterBuilder("env").Equal("prod"))
+				outerGroup.And(NewFilterBuilder("env").Equal("prod"))
 
 				innerGroup := NewFilterGroupBuilder()
-				innerGroup.OR(NewFilterBuilder("host").Equal("web-1"))
-				innerGroup.OR(NewFilterBuilder("host").Equal("web-2"))
+				innerGroup.Or(NewFilterBuilder("host").Equal("web-1"))
+				innerGroup.Or(NewFilterBuilder("host").Equal("web-2"))
 
-				outerGroup.AND(innerGroup)
+				outerGroup.And(innerGroup)
 				return outerGroup.Build()
 			},
 			expected: "(env:prod AND (host:web-1 OR host:web-2))",
@@ -191,13 +191,13 @@ func TestFilterGroupBuilder_Nested(t *testing.T) {
 			name: "nested AND in OR",
 			build: func() (string, error) {
 				outerGroup := NewFilterGroupBuilder()
-				outerGroup.OR(NewFilterBuilder("env").Equal("prod"))
+				outerGroup.Or(NewFilterBuilder("env").Equal("prod"))
 
 				innerGroup := NewFilterGroupBuilder()
-				innerGroup.AND(NewFilterBuilder("host").Equal("web-1"))
-				innerGroup.AND(NewFilterBuilder("region").Equal("us-east-1"))
+				innerGroup.And(NewFilterBuilder("host").Equal("web-1"))
+				innerGroup.And(NewFilterBuilder("region").Equal("us-east-1"))
 
-				outerGroup.OR(innerGroup)
+				outerGroup.Or(innerGroup)
 				return outerGroup.Build()
 			},
 			expected: "(env:prod OR (host:web-1 AND region:us-east-1))",
@@ -209,15 +209,15 @@ func TestFilterGroupBuilder_Nested(t *testing.T) {
 				outerGroup := NewFilterGroupBuilder()
 
 				envGroup := NewFilterGroupBuilder()
-				envGroup.OR(NewFilterBuilder("env").Equal("prod"))
-				envGroup.OR(NewFilterBuilder("env").Equal("staging"))
+				envGroup.Or(NewFilterBuilder("env").Equal("prod"))
+				envGroup.Or(NewFilterBuilder("env").Equal("staging"))
 
 				hostGroup := NewFilterGroupBuilder()
-				hostGroup.OR(NewFilterBuilder("host").Regex("web-.*"))
-				hostGroup.OR(NewFilterBuilder("host").Regex("api-.*"))
+				hostGroup.Or(NewFilterBuilder("host").Regex("web-.*"))
+				hostGroup.Or(NewFilterBuilder("host").Regex("api-.*"))
 
-				outerGroup.AND(envGroup)
-				outerGroup.AND(hostGroup)
+				outerGroup.And(envGroup)
+				outerGroup.And(hostGroup)
 				return outerGroup.Build()
 			},
 			expected: "((env:prod OR env:staging) AND (host:~web-.* OR host:~api-.*))",
@@ -258,8 +258,8 @@ func TestFilterGroupBuilder_WithQueryBuilder(t *testing.T) {
 			name: "metric query with OR group",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.OR(NewFilterBuilder("env").Equal("prod"))
-				group.OR(NewFilterBuilder("env").Equal("staging"))
+				group.Or(NewFilterBuilder("env").Equal("prod"))
+				group.Or(NewFilterBuilder("env").Equal("staging"))
 
 				builder := NewMetricQueryBuilder()
 				builder.Metric("system.cpu.idle")
@@ -273,8 +273,8 @@ func TestFilterGroupBuilder_WithQueryBuilder(t *testing.T) {
 			name: "metric query with multiple groups",
 			build: func() (string, error) {
 				envGroup := NewFilterGroupBuilder()
-				envGroup.OR(NewFilterBuilder("env").Equal("prod"))
-				envGroup.OR(NewFilterBuilder("env").Equal("staging"))
+				envGroup.Or(NewFilterBuilder("env").Equal("prod"))
+				envGroup.Or(NewFilterBuilder("env").Equal("staging"))
 
 				hostFilter := NewFilterBuilder("host").Equal("web-1")
 
@@ -291,8 +291,8 @@ func TestFilterGroupBuilder_WithQueryBuilder(t *testing.T) {
 			name: "metric query with negated group",
 			build: func() (string, error) {
 				group := NewFilterGroupBuilder()
-				group.AND(NewFilterBuilder("env").Equal("prod"))
-				group.AND(NewFilterBuilder("host").Equal("web-1"))
+				group.And(NewFilterBuilder("env").Equal("prod"))
+				group.And(NewFilterBuilder("host").Equal("web-1"))
 				group.Not()
 
 				builder := NewMetricQueryBuilder()
