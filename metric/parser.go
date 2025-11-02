@@ -14,62 +14,65 @@ func ParseQuery(queryString string) (QueryBuilder, error) {
 	// Extract time window if present (DDQP doesn't parse avg(5m): format)
 	timeWindow, cleanedQuery := extractAndRemoveTimeWindow(queryString)
 
-	parser := ddqp.NewMetricQueryParser()
+	// Use the GenericParser so we can accept metric expressions and queries
+	parser := ddqp.NewGenericParser()
 	parsed, err := parser.Parse(cleanedQuery)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse query: %w", err)
 	}
 
-	// Check if this is a wrapped aggregator function (like moving_rollup(...))
-	// We only support direct metric queries for now
-	if parsed.AggregatorFuction != nil {
-		return nil, fmt.Errorf("aggregator functions wrapping queries are not yet supported")
-	}
-
-	if parsed.Query == nil {
-		return nil, fmt.Errorf("query is missing required Query component")
-	}
-
-	builder := NewMetricQueryBuilder()
-
-	// Set aggregator if present
-	if parsed.Query.Aggregator != nil {
-		builder = builder.Aggregator(parsed.Query.Aggregator.Name)
-		// Set time window if we extracted one
-		if timeWindow != "" {
-			builder = builder.TimeWindow(timeWindow)
+	// If we got a plain MetricQuery without wrapper aggregator, use the structured builder
+	if parsed.MetricQuery != nil && parsed.MetricQuery.AggregatorFuction == nil {
+		mq := parsed.MetricQuery
+		if mq.Query == nil {
+			return nil, fmt.Errorf("query is missing required Query component")
 		}
-	}
 
-	// Set metric name
-	builder = builder.Metric(parsed.Query.MetricName)
+		builder := NewMetricQueryBuilder()
 
-	// Convert filters
-	if parsed.Query.Filters != nil {
-		filters, err := convertFilters(parsed.Query.Filters)
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert filters: %w", err)
+		// Set aggregator if present
+		if mq.Query.Aggregator != nil {
+			builder = builder.Aggregator(mq.Query.Aggregator.Name)
+			// Set time window if we extracted one
+			if timeWindow != "" {
+				builder = builder.TimeWindow(timeWindow)
+			}
 		}
-		for _, filter := range filters {
-			builder = builder.Filter(filter)
+
+		// Set metric name
+		builder = builder.Metric(mq.Query.MetricName)
+
+		// Convert filters
+		if mq.Query.Filters != nil {
+			filters, err := convertFilters(mq.Query.Filters)
+			if err != nil {
+				return nil, fmt.Errorf("failed to convert filters: %w", err)
+			}
+			for _, filter := range filters {
+				builder = builder.Filter(filter)
+			}
 		}
-	}
 
-	// Set grouping
-	if len(parsed.Query.Grouping) > 0 {
-		builder = builder.GroupBy(parsed.Query.Grouping...)
-	}
-
-	// Convert functions
-	for _, fn := range parsed.Query.Function {
-		functionBuilder := NewFunctionBuilder(fn.Name)
-		for _, arg := range fn.Args {
-			functionBuilder = functionBuilder.WithArg(arg.String())
+		// Set grouping
+		if len(mq.Query.Grouping) > 0 {
+			builder = builder.GroupBy(mq.Query.Grouping...)
 		}
-		builder = builder.ApplyFunction(functionBuilder)
+
+		// Convert functions
+		for _, fn := range mq.Query.Function {
+			functionBuilder := NewFunctionBuilder(fn.Name)
+			for _, arg := range fn.Args {
+				functionBuilder = functionBuilder.WithArg(arg.String())
+			}
+			builder = builder.ApplyFunction(functionBuilder)
+		}
+
+		return builder, nil
 	}
 
-	return builder, nil
+	// Otherwise, it's a MetricExpression or a wrapped MetricQuery. Return a passthrough builder
+	// that preserves the original query string (including any time window prefix we detected).
+	return newExpressionPassthroughBuilder(queryString), nil
 }
 
 // convertFilters converts DDQP filter structures to DDQB FilterExpression instances
