@@ -76,13 +76,13 @@ func TestDatadogQueryFormat(t *testing.T) {
 					TimeWindow("5m").
 					Metric("system.cpu.idle").
 					Filter(ddqb.Filter("environment").Equal("production")).
-					Filter(ddqb.Filter("host").Regex("web-.*")).
+					Filter(ddqb.Filter("host").Equal("web-01")).
 					GroupBy("host").
 					ApplyFunction(ddqb.Function("fill").WithArg("null")).
 					ApplyFunction(ddqb.Function("rollup").WithArgs("60", "avg")).
 					Build()
 			},
-			expected: "avg(5m):system.cpu.idle{environment:production, host:~web-.*} by {host}.fill(null).rollup(60, avg)",
+			expected: "avg(5m):system.cpu.idle{environment:production, host:web-01} by {host}.fill(null).rollup(60, avg)",
 		},
 	}
 

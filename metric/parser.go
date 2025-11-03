@@ -276,8 +276,6 @@ func convertSimpleFilter(sf *ddqp.SimpleFilter) (FilterBuilder, error) {
 			return builder.NotEqual(value), nil
 		}
 		return builder.Equal(value), nil
-	case fs.Regex:
-		return builder.Regex(value), nil
 	case fs.In:
 		// For IN filters, extract list values
 		values, err := extractFilterValues(sf.FilterValue)

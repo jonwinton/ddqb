@@ -212,7 +212,7 @@ Package metric provides builders for creating Datadog metric queries.
 
 
 <a name="FilterBuilder"></a>
-## type [FilterBuilder](<https://github.com/jonwinton/ddqb/blob/main/metric/filter.go#L33-L50>)
+## type [FilterBuilder](<https://github.com/jonwinton/ddqb/blob/main/metric/filter.go#L31-L45>)
 
 FilterBuilder provides a fluent interface for building filter conditions. FilterBuilder implements FilterExpression.
 
@@ -226,9 +226,6 @@ type FilterBuilder interface {
     // NotEqual creates a negated equality filter (!key:value).
     NotEqual(value string) FilterBuilder
 
-    // Regex creates a regex filter (key:~value).
-    Regex(pattern string) FilterBuilder
-
     // In creates an IN filter.
     In(values ...string) FilterBuilder
 
@@ -238,7 +235,7 @@ type FilterBuilder interface {
 ```
 
 <a name="NewFilterBuilder"></a>
-### func [NewFilterBuilder](<https://github.com/jonwinton/ddqb/blob/main/metric/filter.go#L60>)
+### func [NewFilterBuilder](<https://github.com/jonwinton/ddqb/blob/main/metric/filter.go#L55>)
 
 ```go
 func NewFilterBuilder(key string) FilterBuilder
@@ -304,8 +301,6 @@ const (
     Equal FilterOperation = iota
     // NotEqual represents a negated equality filter (!key:value).
     NotEqual
-    // Regex represents a regex filter (key:~value).
-    Regex
     // In represents an IN filter.
     In
     // NotIn represents a NOT IN filter.

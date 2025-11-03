@@ -30,14 +30,6 @@ func TestFilterBuilder(t *testing.T) {
 			wantErr:  false,
 		},
 		{
-			name: "regex filter",
-			build: func() (string, error) {
-				return metric.NewFilterBuilder("host").Regex("web-.*").Build()
-			},
-			expected: "host:~web-.*",
-			wantErr:  false,
-		},
-		{
 			name: "in filter",
 			build: func() (string, error) {
 				return metric.NewFilterBuilder("host").In("web-1", "web-2", "web-3").Build()

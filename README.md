@@ -63,7 +63,6 @@ query, err := ddqb.Metric().
 
 - Equal: `Filter("host").Equal("web-1")`
 - Not Equal: `Filter("host").NotEqual("web-1")`
-- Regex: `Filter("host").Regex("web-.*")`
 - In: `Filter("host").In("web-1", "web-2", "web-3")`
 - Not In: `Filter("host").NotIn("db-1", "db-2")`
 

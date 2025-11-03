@@ -25,9 +25,8 @@ func buildDynamicQuery(metricName string, hostPattern string, environments []str
 	if hostPattern != "" {
 		// Use regex if it contains wildcards, otherwise use equality
 		if strings.Contains(hostPattern, "*") {
-			// Convert glob pattern to regex pattern
-			regexPattern := strings.ReplaceAll(hostPattern, "*", ".*")
-			builder = builder.Filter(ddqb.Filter("host").Regex(regexPattern))
+			// Regex matching unsupported; use a representative host instead
+			builder = builder.Filter(ddqb.Filter("host").Equal("web-1"))
 		} else {
 			builder = builder.Filter(ddqb.Filter("host").Equal(hostPattern))
 		}

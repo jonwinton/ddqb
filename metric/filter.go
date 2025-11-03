@@ -20,8 +20,6 @@ const (
 	Equal FilterOperation = iota
 	// NotEqual represents a negated equality filter (!key:value).
 	NotEqual
-	// Regex represents a regex filter (key:~value).
-	Regex
 	// In represents an IN filter.
 	In
 	// NotIn represents a NOT IN filter.
@@ -38,9 +36,6 @@ type FilterBuilder interface {
 
 	// NotEqual creates a negated equality filter (!key:value).
 	NotEqual(value string) FilterBuilder
-
-	// Regex creates a regex filter (key:~value).
-	Regex(pattern string) FilterBuilder
 
 	// In creates an IN filter.
 	In(values ...string) FilterBuilder
@@ -78,13 +73,6 @@ func (b *filterBuilder) NotEqual(value string) FilterBuilder {
 	return b
 }
 
-// Regex creates a regex filter (key:~value).
-func (b *filterBuilder) Regex(pattern string) FilterBuilder {
-	b.operation = Regex
-	b.values = []string{pattern}
-	return b
-}
-
 // In creates an IN filter.
 func (b *filterBuilder) In(values ...string) FilterBuilder {
 	b.operation = In
@@ -116,11 +104,6 @@ func (b *filterBuilder) Build() (string, error) {
 			return "", fmt.Errorf("not equal filter requires exactly one value")
 		}
 		return fmt.Sprintf("!%s:%s", b.key, b.values[0]), nil
-	case Regex:
-		if len(b.values) != 1 {
-			return "", fmt.Errorf("regex filter requires exactly one pattern")
-		}
-		return fmt.Sprintf("%s:~%s", b.key, b.values[0]), nil
 	case In:
 		if len(b.values) == 0 {
 			return "", fmt.Errorf("in filter requires at least one value")

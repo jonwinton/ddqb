@@ -25,6 +25,10 @@ docs-deploy:
 docs-api:
 	gomarkdoc --output docs/api.md ./...
 
+# Runs gofumpt on all Go files in the project
+fmt:
+	gofumpt -w .
+
 # Lints the code
 lint:
 	@echo "Checking formatting with gofumpt..."

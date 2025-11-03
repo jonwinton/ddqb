@@ -73,13 +73,6 @@ func TestParseQuery(t *testing.T) {
 			wantErr:     false,
 		},
 		{
-			name:        "query with regex filter",
-			queryString: "system.cpu.idle{host:~web-.*}",
-			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
-			expected:    "system.cpu.idle{host:~web-.*}",
-			wantErr:     false,
-		},
-		{
 			name:        "query with IN filter",
 			queryString: "system.cpu.idle{host IN (web-1,web-2,web-3)}",
 			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },

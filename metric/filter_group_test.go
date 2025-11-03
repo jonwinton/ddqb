@@ -213,14 +213,14 @@ func TestFilterGroupBuilder_Nested(t *testing.T) {
 				envGroup.Or(NewFilterBuilder("env").Equal("staging"))
 
 				hostGroup := NewFilterGroupBuilder()
-				hostGroup.Or(NewFilterBuilder("host").Regex("web-.*"))
-				hostGroup.Or(NewFilterBuilder("host").Regex("api-.*"))
+				hostGroup.Or(NewFilterBuilder("host").Equal("web-1"))
+				hostGroup.Or(NewFilterBuilder("host").Equal("api-1"))
 
 				outerGroup.And(envGroup)
 				outerGroup.And(hostGroup)
 				return outerGroup.Build()
 			},
-			expected: "((env:prod OR env:staging) AND (host:~web-.* OR host:~api-.*))",
+			expected: "((env:prod OR env:staging) AND (host:web-1 OR host:api-1))",
 			wantErr:  false,
 		},
 	}

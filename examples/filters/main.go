@@ -34,11 +34,11 @@ func main() {
 	}
 	fmt.Printf("Query: %s\n\n", query)
 
-	// Example 3: Regex filter
-	fmt.Println("Example 3: Regex filter")
+	// Example 3: Specific host match
+	fmt.Println("Example 3: Specific host match")
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
-		Filter(ddqb.Filter("host").Regex("web-.*")).
+		Filter(ddqb.Filter("host").Equal("web-1")).
 		Build()
 	if err != nil {
 		log.Fatalf("Failed to build query: %v", err)
@@ -71,7 +71,7 @@ func main() {
 	fmt.Println("Example 6: Multiple filters (combined with AND)")
 	query, err = ddqb.Metric().
 		Metric("system.cpu.idle").
-		Filter(ddqb.Filter("host").Regex("web-.*")).
+		Filter(ddqb.Filter("host").Equal("web-1")).
 		Filter(ddqb.Filter("env").Equal("prod")).
 		Build()
 	if err != nil {
@@ -153,8 +153,8 @@ func main() {
 	envGroup.Or(ddqb.Filter("env").Equal("staging"))
 
 	hostGroup := ddqb.FilterGroup()
-	hostGroup.Or(ddqb.Filter("host").Regex("web-.*"))
-	hostGroup.Or(ddqb.Filter("host").Regex("api-.*"))
+	hostGroup.Or(ddqb.Filter("host").Equal("web-1"))
+	hostGroup.Or(ddqb.Filter("host").Equal("api-1"))
 
 	complexGroup := ddqb.FilterGroup()
 	complexGroup.And(envGroup)
