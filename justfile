@@ -99,11 +99,6 @@ release:
 	echo "-- Pushing tag to origin..."
 	git push origin "$next_version"
 
-	echo "-- Changelog for $next_version (single release):"
-	echo "--------------------------------------------------------------------------------"
-	git-cliff --config cliff.toml "$current_version..$next_version" --tag "$next_version" --strip all
-	echo "--------------------------------------------------------------------------------"
-
 	echo ""
 	echo "-- Release $next_version initiated!"
 	echo ""
