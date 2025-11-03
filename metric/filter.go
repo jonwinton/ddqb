@@ -18,7 +18,7 @@ type FilterOperation int
 const (
 	// Equal represents an equality filter (key:value).
 	Equal FilterOperation = iota
-    // NotEqual represents a negated equality filter (!key:value).
+	// NotEqual represents a negated equality filter (!key:value).
 	NotEqual
 	// Regex represents a regex filter (key:~value).
 	Regex
@@ -36,7 +36,7 @@ type FilterBuilder interface {
 	// Equal creates an equality filter (key:value).
 	Equal(value string) FilterBuilder
 
-    // NotEqual creates a negated equality filter (!key:value).
+	// NotEqual creates a negated equality filter (!key:value).
 	NotEqual(value string) FilterBuilder
 
 	// Regex creates a regex filter (key:~value).
@@ -115,7 +115,7 @@ func (b *filterBuilder) Build() (string, error) {
 		if len(b.values) != 1 {
 			return "", fmt.Errorf("not equal filter requires exactly one value")
 		}
-        return fmt.Sprintf("!%s:%s", b.key, b.values[0]), nil
+		return fmt.Sprintf("!%s:%s", b.key, b.values[0]), nil
 	case Regex:
 		if len(b.values) != 1 {
 			return "", fmt.Errorf("regex filter requires exactly one pattern")
