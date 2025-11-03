@@ -75,7 +75,7 @@ func main() {
 		Aggregator("avg").
 		TimeWindow("5m").
 		Metric("system.cpu.idle").
-		Filter(ddqb.Filter("host").Regex("web-.*")).
+		Filter(ddqb.Filter("host").Equal("web-1")).
 		Filter(ddqb.Filter("env").Equal("prod")).
 		GroupBy("host").
 		ApplyFunction(ddqb.Function("fill").WithArg("0")).

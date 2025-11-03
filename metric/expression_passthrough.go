@@ -110,9 +110,6 @@ func toDDQPParam(expr FilterExpression) (*ddqp.Param, error) {
 			sf.Negative = true
 			sf.FilterSeparator.Colon = true
 			sf.FilterValue.SimpleValue = &ddqp.Value{Identifier: &e.values[0]}
-		case Regex:
-			sf.FilterSeparator.Regex = true
-			sf.FilterValue.SimpleValue = &ddqp.Value{Identifier: &e.values[0]}
 		case In, NotIn:
 			if e.operation == In {
 				sf.FilterSeparator.In = true

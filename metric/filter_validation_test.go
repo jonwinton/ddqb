@@ -28,13 +28,6 @@ func TestFilterInputValidation(t *testing.T) {
 			},
 			operation: "NotEqual",
 		},
-		{
-			name: "Regex validation",
-			filterBuild: func() metric.FilterBuilder {
-				return metric.NewFilterBuilder("host").Regex("")
-			},
-			operation: "Regex",
-		},
 	}
 
 	// This test just makes sure that the filter builder methods return

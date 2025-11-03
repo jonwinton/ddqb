@@ -36,12 +36,11 @@ q, err := ddqb.Metric().
   Build()
 ```
 
-### D. Regex, IN/NOT IN, and NotEqual filters
+### D. IN/NOT IN, and NotEqual filters
 
 ```go
 q, err := ddqb.Metric().
   Metric("system.disk.in_use").
-  Filter(ddqb.Filter("device").Regex("/dev/nvme.*")).
   Filter(ddqb.Filter("env").NotEqual("staging")).
   Filter(ddqb.Filter("availability-zone").In("us-east-1a", "us-east-1b")).
   Filter(ddqb.Filter("service").NotIn("batch", "etl")).
