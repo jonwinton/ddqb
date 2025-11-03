@@ -74,9 +74,9 @@ release:
 
 	# Preview changelog
 	echo ""
-	echo "-- Preview of changes for $next_version:"
+	echo "-- Preview of changes for $next_version (since $current_version):"
 	echo "--------------------------------------------------------------------------------"
-	git-cliff --config cliff.toml --unreleased --strip all
+	git-cliff --config cliff.toml "$current_version..HEAD" --tag "$next_version" --strip all
 	echo "--------------------------------------------------------------------------------"
 	echo ""
 
@@ -95,6 +95,11 @@ release:
 	echo "-- Pushing tag to origin..."
 	git push origin "$next_version"
 
+	echo "-- Changelog for $next_version (single release):"
+	echo "--------------------------------------------------------------------------------"
+	git-cliff --config cliff.toml "$current_version..$next_version" --tag "$next_version" --strip all
+	echo "--------------------------------------------------------------------------------"
+
 	echo ""
 	echo "-- Release $next_version initiated!"
 	echo ""
@@ -103,5 +108,5 @@ release:
 	echo "   2. Create GitHub release"
 	echo "   3. Publish release notes"
 	echo ""
-	echo "-- Monitor progress: https://github.com/jonwinton/ddqp/actions"
+	echo "-- Monitor progress: https://github.com/jonwinton/ddqb/actions"
 
