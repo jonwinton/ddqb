@@ -26,7 +26,7 @@ func TestFilterBuilder(t *testing.T) {
 			build: func() (string, error) {
 				return metric.NewFilterBuilder("host").NotEqual("web-1").Build()
 			},
-			expected: "host!:web-1",
+            expected: "!host:web-1",
 			wantErr:  false,
 		},
 		{
