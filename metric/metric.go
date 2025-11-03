@@ -194,13 +194,12 @@ func (b *metricQueryBuilder) Build() (string, error) {
 			for _, filter := range b.filters {
 				if fb, ok := filter.(*filterBuilder); ok && fb.operation == NotEqual {
 					// Convert "!key:value" into "NOT key:value" when mixing explicit boolean operators
-					if len(fb.values) == 1 {
-						inner := NewFilterGroupBuilder()
-						inner.And(NewFilterBuilder(fb.key).Equal(fb.values[0]))
-						inner.Not()
-						group.And(inner)
-						continue
-					}
+					// NotEqual() always sets a single value
+					inner := NewFilterGroupBuilder()
+					inner.And(NewFilterBuilder(fb.key).Equal(fb.values[0]))
+					inner.Not()
+					group.And(inner)
+					continue
 				}
 				group.And(filter)
 			}
