@@ -97,7 +97,7 @@ func TestParseQuery(t *testing.T) {
 			name:        "query with not equal filter",
 			queryString: "system.cpu.idle{!host:web-1}",
 			build:       func(b metric.QueryBuilder) metric.QueryBuilder { return b },
-			expected:    "system.cpu.idle{host!:web-1}",
+			expected:    "system.cpu.idle{!host:web-1}",
 			wantErr:     false,
 		},
 	}

@@ -6,9 +6,9 @@
 import "github.com/jonwinton/ddqb"
 ```
 
-Package ddqb provides a fluent API for building DataDog queries.
+Package ddqb provides a fluent API for building Datadog queries.
 
-Package ddqb provides a fluent API for building DataDog queries.
+Package ddqb provides a fluent API for building Datadog queries.
 
 <details><summary>Example</summary>
 <p>
@@ -123,7 +123,7 @@ FilterGroup creates a new filter group builder. This is a convenience function f
 func FromQuery(queryString string) (metric.QueryBuilder, error)
 ```
 
-FromQuery parses an existing DataDog query string and returns a QueryBuilder that can be modified using the fluent API.
+FromQuery parses an existing Datadog query string and returns a QueryBuilder that can be modified using the fluent API.
 
 Example:
 
@@ -168,14 +168,24 @@ type Builder interface {
 <a name="Renderer"></a>
 ## type [Renderer](<https://github.com/jonwinton/ddqb/blob/main/builder.go#L12-L15>)
 
-Renderer defines an interface for objects that can render themselves as DataDog query strings.
+Renderer defines an interface for objects that can render themselves as Datadog query strings.
 
 ```go
 type Renderer interface {
-    // String returns the object as a DataDog query string.
+    // String returns the object as a Datadog query string.
     String() string
 }
 ```
+
+# debug
+
+```go
+import "github.com/jonwinton/ddqb/debug"
+```
+
+## Index
+
+
 
 # metric
 
@@ -183,7 +193,7 @@ type Renderer interface {
 import "github.com/jonwinton/ddqb/metric"
 ```
 
-Package metric provides builders for creating DataDog metric queries.
+Package metric provides builders for creating Datadog metric queries.
 
 ## Index
 
@@ -213,7 +223,7 @@ type FilterBuilder interface {
     // Equal creates an equality filter (key:value).
     Equal(value string) FilterBuilder
 
-    // NotEqual creates a negated equality filter (key!:value).
+    // NotEqual creates a negated equality filter (!key:value).
     NotEqual(value string) FilterBuilder
 
     // Regex creates a regex filter (key:~value).
@@ -292,7 +302,7 @@ type FilterOperation int
 const (
     // Equal represents an equality filter (key:value).
     Equal FilterOperation = iota
-    // NotEqual represents a negated equality filter (key!:value).
+    // NotEqual represents a negated equality filter (!key:value).
     NotEqual
     // Regex represents a regex filter (key:~value).
     Regex
@@ -408,7 +418,7 @@ NewMetricQueryBuilder creates a new metric query builder.
 func ParseQuery(queryString string) (QueryBuilder, error)
 ```
 
-ParseQuery parses a DataDog query string and returns a QueryBuilder that can be modified using the fluent API.
+ParseQuery parses a Datadog query string and returns a QueryBuilder that can be modified using the fluent API.
 
 # advanced
 
@@ -428,7 +438,7 @@ Package main demonstrates advanced usage of ddqb, including dynamic query buildi
 import "github.com/jonwinton/ddqb/examples/basic"
 ```
 
-Package main demonstrates basic usage examples of ddqb for building DataDog metric queries.
+Package main demonstrates basic usage examples of ddqb for building Datadog metric queries.
 
 ## Index
 
@@ -440,7 +450,7 @@ Package main demonstrates basic usage examples of ddqb for building DataDog metr
 import "github.com/jonwinton/ddqb/examples/filters"
 ```
 
-Package main demonstrates various filter operations available in ddqb for DataDog metric queries.
+Package main demonstrates various filter operations available in ddqb for Datadog metric queries.
 
 ## Index
 
@@ -452,7 +462,7 @@ Package main demonstrates various filter operations available in ddqb for DataDo
 import "github.com/jonwinton/ddqb/examples/functions"
 ```
 
-Package main demonstrates how to apply functions to DataDog metric queries using ddqb.
+Package main demonstrates how to apply functions to Datadog metric queries using ddqb.
 
 ## Index
 
@@ -464,7 +474,7 @@ Package main demonstrates how to apply functions to DataDog metric queries using
 import "github.com/jonwinton/ddqb/examples/parse"
 ```
 
-Package main demonstrates parsing existing DataDog query strings and modifying them using ddqb.
+Package main demonstrates parsing existing Datadog query strings and modifying them using ddqb.
 
 ## Index
 
