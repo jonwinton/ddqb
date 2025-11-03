@@ -1,3 +1,0 @@
-#!/bin/bash
-
-gotestsum -f standard-verbose
