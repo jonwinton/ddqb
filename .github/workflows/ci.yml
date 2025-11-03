@@ -14,7 +14,7 @@ jobs:
       - name: Init Hermit
         run: ./bin/hermit env -r >> $GITHUB_ENV
       - name: Test
-        run: ./scripts/test
+        run: just test
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -24,4 +24,4 @@ jobs:
       - name: Init Hermit
         run: ./bin/hermit env -r >> $GITHUB_ENV
       - name: Lint
-        run: ./scripts/lint
+        run: just lint

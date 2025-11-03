@@ -36,3 +36,72 @@ lint:
 # Runs tests
 test:
 	gotestsum -f standard-verbose
+
+release:
+	#!/bin/bash
+	set -e
+
+	echo "-- Analyzing commits to determine next version..."
+
+	# Get current version
+	current_version=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+	echo "-- Current version: $current_version"
+
+	# Calculate next version based on conventional commits
+	if [ -n "$1" ]; then
+		# Manual override
+		case $1 in
+			major)
+				next_version=$(svu major)
+				;;
+			minor)
+				next_version=$(svu minor)
+				;;
+			patch)
+				next_version=$(svu patch)
+				;;
+			*)
+				echo "-- Invalid argument. Use: major, minor, or patch"
+				exit 1
+				;;
+		esac
+		echo "-- Manual version bump: $next_version ($1)"
+	else
+		# Automatic detection based on conventional commits
+		next_version=$(svu next)
+		echo "-- Auto-detected next version: $next_version"
+	fi
+
+	# Preview changelog
+	echo ""
+	echo "-- Preview of changes for $next_version:"
+	echo "--------------------------------------------------------------------------------"
+	git-cliff --config cliff.toml --unreleased --strip all
+	echo "--------------------------------------------------------------------------------"
+	echo ""
+
+	# Confirm
+	read -p "-- Create release $next_version? [y/N] " -n 1 -r
+	echo
+	if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+		echo "Release cancelled"
+		exit 1
+	fi
+
+	# Create and push tag
+	echo "-- Creating tag $next_version..."
+	git tag "$next_version"
+
+	echo "-- Pushing tag to origin..."
+	git push origin "$next_version"
+
+	echo ""
+	echo "-- Release $next_version initiated!"
+	echo ""
+	echo "-- GitHub Actions will now:"
+	echo "   1. Generate changelog"
+	echo "   2. Create GitHub release"
+	echo "   3. Publish release notes"
+	echo ""
+	echo "-- Monitor progress: https://github.com/jonwinton/ddqp/actions"
+
