@@ -189,8 +189,18 @@ func (b *metricQueryBuilder) Build() (string, error) {
 
 		if hasExplicitOperators {
 			// Wrap all filters in a group with explicit AND operators
+			// and convert simple NotEqual filters to explicit NOT groups
 			group := NewFilterGroupBuilder()
 			for _, filter := range b.filters {
+				if fb, ok := filter.(*filterBuilder); ok && fb.operation == NotEqual {
+					// Convert "!key:value" into "NOT key:value" when mixing explicit boolean operators
+					// NotEqual() always sets a single value
+					inner := NewFilterGroupBuilder()
+					inner.And(NewFilterBuilder(fb.key).Equal(fb.values[0]))
+					inner.Not()
+					group.And(inner)
+					continue
+				}
 				group.And(filter)
 			}
 			groupStr, err := group.Build()
