@@ -1,0 +1,1029 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Fluent, type-safe query builder for Datadog metrics and monitors">
+      
+      
+      
+        <link rel="canonical" href="https://jonwinton.github.io/ddqb/api/">
+      
+      
+        <link rel="prev" href="../examples/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>API - DDQB — Datadog Query Builder</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ddqb" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="DDQB — Datadog Query Builder" class="md-header__button md-logo" aria-label="DDQB — Datadog Query Builder" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DDQB — Datadog Query Builder
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jonwinton/ddqb" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jonwinton/ddqb
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="DDQB — Datadog Query Builder" class="md-nav__button md-logo" aria-label="DDQB — Datadog Query Builder" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DDQB — Datadog Query Builder
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jonwinton/ddqb" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jonwinton/ddqb
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func Filter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-filtergroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func FilterGroup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-fromquery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func FromQuery
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func Function
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-metric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func Metric
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type Builder
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-renderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type Renderer
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func Filter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-filtergroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func FilterGroup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-fromquery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func FromQuery
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func Function
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#func-metric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        func Metric
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type Builder
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-renderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type Renderer
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<!-- Code generated by gomarkdoc. DO NOT EDIT -->
+
+<h1 id="ddqb">ddqb<a class="headerlink" href="#ddqb" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/jonwinton/ddqb&quot;</span>
+</code></pre></div>
+<p>Package ddqb provides a fluent API for building Datadog queries.</p>
+<p>Package ddqb provides a fluent API for building Datadog queries.</p>
+<details><summary>Example</summary>
+<p>
+
+
+
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span>
+<span class="w">    </span><span class="s">&quot;log&quot;</span>
+
+<span class="w">    </span><span class="s">&quot;github.com/jonwinton/ddqb&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Create a simple metric query</span>
+<span class="w">    </span><span class="nx">query</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Metric</span><span class="p">().</span>
+<span class="w">        </span><span class="nx">Metric</span><span class="p">(</span><span class="s">&quot;system.cpu.idle&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">Build</span><span class="p">()</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Failed to build query: %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">// Create a metric query with aggregation</span>
+<span class="w">    </span><span class="nx">query</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Metric</span><span class="p">().</span>
+<span class="w">        </span><span class="nx">Aggregator</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">TimeWindow</span><span class="p">(</span><span class="s">&quot;5m&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">Metric</span><span class="p">(</span><span class="s">&quot;system.cpu.idle&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">Build</span><span class="p">()</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Failed to build query: %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">// Create a metric query with filtering</span>
+<span class="w">    </span><span class="nx">query</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Metric</span><span class="p">().</span>
+<span class="w">        </span><span class="nx">Metric</span><span class="p">(</span><span class="s">&quot;system.cpu.idle&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">Filter</span><span class="p">(</span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Filter</span><span class="p">(</span><span class="s">&quot;host&quot;</span><span class="p">).</span><span class="nx">Equal</span><span class="p">(</span><span class="s">&quot;web-1&quot;</span><span class="p">)).</span>
+<span class="w">        </span><span class="nx">Build</span><span class="p">()</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Failed to build query: %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">// Create a complex metric query</span>
+<span class="w">    </span><span class="nx">query</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Metric</span><span class="p">().</span>
+<span class="w">        </span><span class="nx">Aggregator</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">TimeWindow</span><span class="p">(</span><span class="s">&quot;5m&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">Metric</span><span class="p">(</span><span class="s">&quot;system.cpu.idle&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">Filter</span><span class="p">(</span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Filter</span><span class="p">(</span><span class="s">&quot;host&quot;</span><span class="p">).</span><span class="nx">Equal</span><span class="p">(</span><span class="s">&quot;web-1&quot;</span><span class="p">)).</span>
+<span class="w">        </span><span class="nx">Filter</span><span class="p">(</span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Filter</span><span class="p">(</span><span class="s">&quot;env&quot;</span><span class="p">).</span><span class="nx">Equal</span><span class="p">(</span><span class="s">&quot;prod&quot;</span><span class="p">)).</span>
+<span class="w">        </span><span class="nx">GroupBy</span><span class="p">(</span><span class="s">&quot;host&quot;</span><span class="p">).</span>
+<span class="w">        </span><span class="nx">ApplyFunction</span><span class="p">(</span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Function</span><span class="p">(</span><span class="s">&quot;fill&quot;</span><span class="p">).</span><span class="nx">WithArg</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)).</span>
+<span class="w">        </span><span class="nx">ApplyFunction</span><span class="p">(</span><span class="nx">ddqb</span><span class="p">.</span><span class="nx">Function</span><span class="p">(</span><span class="s">&quot;rollup&quot;</span><span class="p">).</span><span class="nx">WithArgs</span><span class="p">(</span><span class="s">&quot;60&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;sum&quot;</span><span class="p">)).</span>
+<span class="w">        </span><span class="nx">Build</span><span class="p">()</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Failed to build query: %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+#### Output
+
+<div class="highlight"><pre><span></span><code>system.cpu.idle{*}
+avg(5m):system.cpu.idle{*}
+system.cpu.idle{host:web-1}
+avg(5m):system.cpu.idle{host:web-1, env:prod} by {host}.fill(0).rollup(60, sum)
+</code></pre></div>
+
+</p>
+</details>
+
+<h2 id="index">Index<a class="headerlink" href="#index" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#Filter">func Filter(key string) metric.FilterBuilder</a></li>
+<li><a href="#FilterGroup">func FilterGroup() metric.FilterGroupBuilder</a></li>
+<li><a href="#FromQuery">func FromQuery(queryString string) (metric.QueryBuilder, error)</a></li>
+<li><a href="#Function">func Function(name string) metric.FunctionBuilder</a></li>
+<li><a href="#Metric">func Metric() metric.QueryBuilder</a></li>
+<li><a href="#Builder">type Builder</a></li>
+<li><a href="#Renderer">type Renderer</a></li>
+</ul>
+<p><a name="Filter"></a></p>
+<h2 id="func-filter">func Filter<a class="headerlink" href="#func-filter" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">Filter</span><span class="p">(</span><span class="nx">key</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">metric</span><span class="p">.</span><span class="nx">FilterBuilder</span>
+</code></pre></div>
+<p>Filter creates a new filter builder with the given key. This is a convenience function for creating filter builders.</p>
+<p><a name="FilterGroup"></a></p>
+<h2 id="func-filtergroup">func FilterGroup<a class="headerlink" href="#func-filtergroup" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">FilterGroup</span><span class="p">()</span><span class="w"> </span><span class="nx">metric</span><span class="p">.</span><span class="nx">FilterGroupBuilder</span>
+</code></pre></div>
+<p>FilterGroup creates a new filter group builder. This is a convenience function for creating filter group builders.</p>
+<p><a name="FromQuery"></a></p>
+<h2 id="func-fromquery">func FromQuery<a class="headerlink" href="#func-fromquery" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">FromQuery</span><span class="p">(</span><span class="nx">queryString</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">metric</span><span class="p">.</span><span class="nx">QueryBuilder</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+<p>FromQuery parses an existing Datadog query string and returns a QueryBuilder that can be modified using the fluent API.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code>builder, err := ddqb.FromQuery(&quot;avg(5m):system.cpu.idle{host:web-1} by {host}.fill(0)&quot;)
+if err != nil {
+    // handle error
+}
+modifiedQuery, err := builder.TimeWindow(&quot;10m&quot;).Filter(ddqb.Filter(&quot;env&quot;).Equal(&quot;prod&quot;)).Build()
+</code></pre></div>
+<p><a name="Function"></a></p>
+<h2 id="func-function">func Function<a class="headerlink" href="#func-function" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">Function</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">metric</span><span class="p">.</span><span class="nx">FunctionBuilder</span>
+</code></pre></div>
+<p>Function creates a new function builder with the given name. This is a convenience function for creating function builders.</p>
+<p><a name="Metric"></a></p>
+<h2 id="func-metric">func Metric<a class="headerlink" href="#func-metric" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">Metric</span><span class="p">()</span><span class="w"> </span><span class="nx">metric</span><span class="p">.</span><span class="nx">QueryBuilder</span>
+</code></pre></div>
+<p>Metric creates a new metric query builder. This is the main entry point for building metric queries.</p>
+<p><a name="Builder"></a></p>
+<h2 id="type-builder">type Builder<a class="headerlink" href="#type-builder" title="Permanent link">&para;</a></h2>
+<p>Builder is the base interface for all query builders. It defines the methods that all builders must implement.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">Builder</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Build returns the built query as a string.</span>
+<span class="w">    </span><span class="nx">Build</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><a name="Renderer"></a></p>
+<h2 id="type-renderer">type Renderer<a class="headerlink" href="#type-renderer" title="Permanent link">&para;</a></h2>
+<p>Renderer defines an interface for objects that can render themselves as Datadog query strings.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">Renderer</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// String returns the object as a Datadog query string.</span>
+<span class="w">    </span><span class="nx">String</span><span class="p">()</span><span class="w"> </span><span class="kt">string</span>
+<span class="p">}</span>
+</code></pre></div>
+<h1 id="metric">metric<a class="headerlink" href="#metric" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/jonwinton/ddqb/metric&quot;</span>
+</code></pre></div>
+<p>Package metric provides builders for creating Datadog metric queries.</p>
+<h2 id="index_1">Index<a class="headerlink" href="#index_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#FilterBuilder">type FilterBuilder</a></li>
+<li><a href="#NewFilterBuilder">func NewFilterBuilder(key string) FilterBuilder</a></li>
+<li><a href="#FilterExpression">type FilterExpression</a></li>
+<li><a href="#FilterGroupBuilder">type FilterGroupBuilder</a></li>
+<li><a href="#NewFilterGroupBuilder">func NewFilterGroupBuilder() FilterGroupBuilder</a></li>
+<li><a href="#FilterOperation">type FilterOperation</a></li>
+<li><a href="#FunctionBuilder">type FunctionBuilder</a></li>
+<li><a href="#NewFunctionBuilder">func NewFunctionBuilder(name string) FunctionBuilder</a></li>
+<li><a href="#GroupOperator">type GroupOperator</a></li>
+<li><a href="#QueryBuilder">type QueryBuilder</a></li>
+<li><a href="#NewMetricQueryBuilder">func NewMetricQueryBuilder() QueryBuilder</a></li>
+<li><a href="#ParseQuery">func ParseQuery(queryString string) (QueryBuilder, error)</a></li>
+</ul>
+<p><a name="FilterBuilder"></a></p>
+<h2 id="type-filterbuilder">type FilterBuilder<a class="headerlink" href="#type-filterbuilder" title="Permanent link">&para;</a></h2>
+<p>FilterBuilder provides a fluent interface for building filter conditions. FilterBuilder implements FilterExpression.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">FilterBuilder</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">FilterExpression</span>
+
+<span class="w">    </span><span class="c1">// Equal creates an equality filter (key:value).</span>
+<span class="w">    </span><span class="nx">Equal</span><span class="p">(</span><span class="nx">value</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterBuilder</span>
+
+<span class="w">    </span><span class="c1">// NotEqual creates a negated equality filter (!key:value).</span>
+<span class="w">    </span><span class="nx">NotEqual</span><span class="p">(</span><span class="nx">value</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterBuilder</span>
+
+<span class="w">    </span><span class="c1">// In creates an IN filter.</span>
+<span class="w">    </span><span class="nx">In</span><span class="p">(</span><span class="nx">values</span><span class="w"> </span><span class="o">...</span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterBuilder</span>
+
+<span class="w">    </span><span class="c1">// NotIn creates a NOT IN filter.</span>
+<span class="w">    </span><span class="nx">NotIn</span><span class="p">(</span><span class="nx">values</span><span class="w"> </span><span class="o">...</span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterBuilder</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><a name="NewFilterBuilder"></a></p>
+<h3 id="func-newfilterbuilder">func NewFilterBuilder<a class="headerlink" href="#func-newfilterbuilder" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">NewFilterBuilder</span><span class="p">(</span><span class="nx">key</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterBuilder</span>
+</code></pre></div>
+<p>NewFilterBuilder creates a new filter builder with the given key.</p>
+<p><a name="FilterExpression"></a></p>
+<h2 id="type-filterexpression">type FilterExpression<a class="headerlink" href="#type-filterexpression" title="Permanent link">&para;</a></h2>
+<p>FilterExpression is a common interface for both individual filters and filter groups. This allows QueryBuilder to accept either FilterBuilder or FilterGroupBuilder instances.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">FilterExpression</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Build returns the built filter expression as a string.</span>
+<span class="w">    </span><span class="nx">Build</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><a name="FilterGroupBuilder"></a></p>
+<h2 id="type-filtergroupbuilder">type FilterGroupBuilder<a class="headerlink" href="#type-filtergroupbuilder" title="Permanent link">&para;</a></h2>
+<p>FilterGroupBuilder provides a fluent interface for building filter groups with boolean logic. FilterGroupBuilder implements FilterExpression.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">FilterGroupBuilder</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">FilterExpression</span>
+
+<span class="w">    </span><span class="c1">// And adds a filter or nested group with AND operator.</span>
+<span class="w">    </span><span class="nx">And</span><span class="p">(</span><span class="nx">expr</span><span class="w"> </span><span class="nx">FilterExpression</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterGroupBuilder</span>
+
+<span class="w">    </span><span class="c1">// Or adds a filter or nested group with OR operator.</span>
+<span class="w">    </span><span class="nx">Or</span><span class="p">(</span><span class="nx">expr</span><span class="w"> </span><span class="nx">FilterExpression</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterGroupBuilder</span>
+
+<span class="w">    </span><span class="c1">// Not negates the entire group (wraps in NOT (...)).</span>
+<span class="w">    </span><span class="nx">Not</span><span class="p">()</span><span class="w"> </span><span class="nx">FilterGroupBuilder</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><a name="NewFilterGroupBuilder"></a></p>
+<h3 id="func-newfiltergroupbuilder">func NewFilterGroupBuilder<a class="headerlink" href="#func-newfiltergroupbuilder" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">NewFilterGroupBuilder</span><span class="p">()</span><span class="w"> </span><span class="nx">FilterGroupBuilder</span>
+</code></pre></div>
+<p>NewFilterGroupBuilder creates a new filter group builder.</p>
+<p><a name="FilterOperation"></a></p>
+<h2 id="type-filteroperation">type FilterOperation<a class="headerlink" href="#type-filteroperation" title="Permanent link">&para;</a></h2>
+<p>FilterOperation represents the type of filter operation.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">FilterOperation</span><span class="w"> </span><span class="kt">int</span>
+</code></pre></div>
+<p><a name="Equal"></a></p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="c1">// Equal represents an equality filter (key:value).</span>
+<span class="w">    </span><span class="nx">Equal</span><span class="w"> </span><span class="nx">FilterOperation</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">iota</span>
+<span class="w">    </span><span class="c1">// NotEqual represents a negated equality filter (!key:value).</span>
+<span class="w">    </span><span class="nx">NotEqual</span>
+<span class="w">    </span><span class="c1">// In represents an IN filter.</span>
+<span class="w">    </span><span class="nx">In</span>
+<span class="w">    </span><span class="c1">// NotIn represents a NOT IN filter.</span>
+<span class="w">    </span><span class="nx">NotIn</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><a name="FunctionBuilder"></a></p>
+<h2 id="type-functionbuilder">type FunctionBuilder<a class="headerlink" href="#type-functionbuilder" title="Permanent link">&para;</a></h2>
+<p>FunctionBuilder provides a fluent interface for building functions to apply to queries.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">FunctionBuilder</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// WithArg adds an argument to the function.</span>
+<span class="w">    </span><span class="nx">WithArg</span><span class="p">(</span><span class="nx">arg</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FunctionBuilder</span>
+
+<span class="w">    </span><span class="c1">// WithArgs adds multiple arguments to the function.</span>
+<span class="w">    </span><span class="nx">WithArgs</span><span class="p">(</span><span class="nx">args</span><span class="w"> </span><span class="o">...</span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FunctionBuilder</span>
+
+<span class="w">    </span><span class="c1">// Build returns the built function as a string.</span>
+<span class="w">    </span><span class="nx">Build</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><a name="NewFunctionBuilder"></a></p>
+<h3 id="func-newfunctionbuilder">func NewFunctionBuilder<a class="headerlink" href="#func-newfunctionbuilder" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">NewFunctionBuilder</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">FunctionBuilder</span>
+</code></pre></div>
+<p>NewFunctionBuilder creates a new function builder with the given name.</p>
+<p><a name="GroupOperator"></a></p>
+<h2 id="type-groupoperator">type GroupOperator<a class="headerlink" href="#type-groupoperator" title="Permanent link">&para;</a></h2>
+<p>GroupOperator represents the boolean operator used in a filter group.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">GroupOperator</span><span class="w"> </span><span class="kt">int</span>
+</code></pre></div>
+<p><a name="AndOperator"></a></p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="c1">// AndOperator represents an AND operation between filters.</span>
+<span class="w">    </span><span class="nx">AndOperator</span><span class="w"> </span><span class="nx">GroupOperator</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">iota</span>
+<span class="w">    </span><span class="c1">// OrOperator represents an OR operation between filters.</span>
+<span class="w">    </span><span class="nx">OrOperator</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><a name="QueryBuilder"></a></p>
+<h2 id="type-querybuilder">type QueryBuilder<a class="headerlink" href="#type-querybuilder" title="Permanent link">&para;</a></h2>
+<p>QueryBuilder provides a fluent interface for building metric queries.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">QueryBuilder</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Metric sets the metric name for the query.</span>
+<span class="w">    </span><span class="nx">Metric</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+
+<span class="w">    </span><span class="c1">// Aggregator sets the aggregation method for the query (e.g., &quot;avg&quot;, &quot;sum&quot;).</span>
+<span class="w">    </span><span class="nx">Aggregator</span><span class="p">(</span><span class="nx">agg</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+
+<span class="w">    </span><span class="c1">// Filter adds a filter condition or filter group to the query.</span>
+<span class="w">    </span><span class="nx">Filter</span><span class="p">(</span><span class="nx">filter</span><span class="w"> </span><span class="nx">FilterExpression</span><span class="p">)</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+
+<span class="w">    </span><span class="c1">// GetFilters returns all filter expressions in the query.</span>
+<span class="w">    </span><span class="c1">// This allows direct access to modify FilterGroupBuilder instances.</span>
+<span class="w">    </span><span class="nx">GetFilters</span><span class="p">()</span><span class="w"> </span><span class="p">[]</span><span class="nx">FilterExpression</span>
+
+<span class="w">    </span><span class="c1">// FindGroup finds the first FilterGroupBuilder that matches the predicate function.</span>
+<span class="w">    </span><span class="c1">// Returns nil if no matching group is found.</span>
+<span class="w">    </span><span class="nx">FindGroup</span><span class="p">(</span><span class="nx">predicate</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">FilterGroupBuilder</span><span class="p">)</span><span class="w"> </span><span class="kt">bool</span><span class="p">)</span><span class="w"> </span><span class="nx">FilterGroupBuilder</span>
+
+<span class="w">    </span><span class="c1">// AddToGroup adds a filter to the specified FilterGroupBuilder.</span>
+<span class="w">    </span><span class="c1">// The filter is added using the group&#39;s existing operator (AND or OR).</span>
+<span class="w">    </span><span class="nx">AddToGroup</span><span class="p">(</span><span class="nx">group</span><span class="w"> </span><span class="nx">FilterGroupBuilder</span><span class="p">,</span><span class="w"> </span><span class="nx">filter</span><span class="w"> </span><span class="nx">FilterExpression</span><span class="p">)</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+
+<span class="w">    </span><span class="c1">// GroupBy sets grouping parameters for the query.</span>
+<span class="w">    </span><span class="nx">GroupBy</span><span class="p">(</span><span class="nx">groups</span><span class="w"> </span><span class="o">...</span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+
+<span class="w">    </span><span class="c1">// ApplyFunction applies a function to the query.</span>
+<span class="w">    </span><span class="nx">ApplyFunction</span><span class="p">(</span><span class="nx">fn</span><span class="w"> </span><span class="nx">FunctionBuilder</span><span class="p">)</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+
+<span class="w">    </span><span class="c1">// TimeWindow sets the time window for the query (e.g., &quot;1m&quot;, &quot;5m&quot;).</span>
+<span class="w">    </span><span class="nx">TimeWindow</span><span class="p">(</span><span class="nx">window</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+
+<span class="w">    </span><span class="c1">// Build returns the built query as a string.</span>
+<span class="w">    </span><span class="nx">Build</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><a name="NewMetricQueryBuilder"></a></p>
+<h3 id="func-newmetricquerybuilder">func NewMetricQueryBuilder<a class="headerlink" href="#func-newmetricquerybuilder" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">NewMetricQueryBuilder</span><span class="p">()</span><span class="w"> </span><span class="nx">QueryBuilder</span>
+</code></pre></div>
+<p>NewMetricQueryBuilder creates a new metric query builder.</p>
+<p><a name="ParseQuery"></a></p>
+<h3 id="func-parsequery">func ParseQuery<a class="headerlink" href="#func-parsequery" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">ParseQuery</span><span class="p">(</span><span class="nx">queryString</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">QueryBuilder</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+<p>ParseQuery parses a Datadog query string and returns a QueryBuilder that can be modified using the fluent API.</p>
+<h1 id="advanced">advanced<a class="headerlink" href="#advanced" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/jonwinton/ddqb/examples/advanced&quot;</span>
+</code></pre></div>
+<p>Package main demonstrates advanced usage of ddqb, including dynamic query building based on runtime conditions.</p>
+<h2 id="index_2">Index<a class="headerlink" href="#index_2" title="Permanent link">&para;</a></h2>
+<h1 id="basic">basic<a class="headerlink" href="#basic" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/jonwinton/ddqb/examples/basic&quot;</span>
+</code></pre></div>
+<p>Package main demonstrates basic usage examples of ddqb for building Datadog metric queries.</p>
+<h2 id="index_3">Index<a class="headerlink" href="#index_3" title="Permanent link">&para;</a></h2>
+<h1 id="filters">filters<a class="headerlink" href="#filters" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/jonwinton/ddqb/examples/filters&quot;</span>
+</code></pre></div>
+<p>Package main demonstrates various filter operations available in ddqb for Datadog metric queries.</p>
+<h2 id="index_4">Index<a class="headerlink" href="#index_4" title="Permanent link">&para;</a></h2>
+<h1 id="functions">functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/jonwinton/ddqb/examples/functions&quot;</span>
+</code></pre></div>
+<p>Package main demonstrates how to apply functions to Datadog metric queries using ddqb.</p>
+<h2 id="index_5">Index<a class="headerlink" href="#index_5" title="Permanent link">&para;</a></h2>
+<h1 id="parse">parse<a class="headerlink" href="#parse" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/jonwinton/ddqb/examples/parse&quot;</span>
+</code></pre></div>
+<p>Package main demonstrates parsing existing Datadog query strings and modifying them using ddqb.</p>
+<h2 id="index_6">Index<a class="headerlink" href="#index_6" title="Permanent link">&para;</a></h2>
+<p>Generated by <a href="https://github.com/princjef/gomarkdoc">gomarkdoc</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tabs", "content.code.copy", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
