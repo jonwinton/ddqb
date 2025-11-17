@@ -460,6 +460,8 @@ func TestExpressionNormalization_MixedAndComma(t *testing.T) {
 		t.Fatalf("Build() error = %v", err)
 	}
 
+	// Keep token-based assertions below; full-string assertion is covered in a targeted test
+
 	// Expect explicit boolean style inside braces (no commas), and NOT for negation
 	// Extract the first filter block {...}
 	start := strings.Index(out, "{")
@@ -509,5 +511,83 @@ func TestExpressionNormalization_DefaultCommaWhenNoExplicit(t *testing.T) {
 	}
 	if contains(filterBlock, " AND ") {
 		t.Errorf("did not expect AND when no explicit boolean operators, got: %s", out)
+	}
+}
+
+func TestNormalization_OrWithNegatedTag(t *testing.T) {
+	// Start with comma-style filters including a negated tag
+	query := "system.cpu.idle{env:prod, !tag:filter}"
+	builder, err := metric.ParseQuery(query)
+	if err != nil {
+		t.Fatalf("ParseQuery() error = %v", err)
+	}
+
+	// Add an OR group to force explicit boolean normalization
+	orGroup := metric.NewFilterGroupBuilder()
+	orGroup.Or(ddqb.Filter("region").Equal("us-east-1"))
+	builder = builder.Filter(orGroup)
+
+	out, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Build() error = %v", err)
+	}
+
+	// Assert full normalized query for easier debugging
+	expectedFull := "system.cpu.idle{(env:prod AND NOT tag:filter AND region:us-east-1)}"
+	if out != expectedFull {
+		t.Errorf("unexpected normalized query. got=%q want=%q", out, expectedFull)
+	}
+
+	// Extract the first filter block {...}
+	start := strings.Index(out, "{")
+	end := strings.Index(out[start+1:], "}")
+	var filterBlock string
+	if start != -1 && end != -1 {
+		filterBlock = out[start : start+end+2]
+	} else {
+		filterBlock = out
+	}
+
+	// After normalization there should be no commas and no leading '!' negation,
+	// but there should be explicit AND and NOT
+	if strings.Contains(filterBlock, ",") {
+		t.Errorf("expected commas to be converted to AND, got: %s", filterBlock)
+	}
+	if !strings.Contains(filterBlock, " AND ") {
+		t.Errorf("expected AND separators after normalization, got: %s", filterBlock)
+	}
+	if strings.Contains(filterBlock, "!") {
+		t.Errorf("expected '!' negation to be converted to NOT, got: %s", filterBlock)
+	}
+	if !strings.Contains(filterBlock, " NOT ") {
+		t.Errorf("expected NOT for negations after normalization, got: %s", filterBlock)
+	}
+}
+
+func TestAddNegatedTagWithExplicitOps(t *testing.T) {
+	// Start from a simple query and add an explicit OR group, then add a negated tag
+	query := "system.cpu.idle{*}"
+	builder, err := metric.ParseQuery(query)
+	if err != nil {
+		t.Fatalf("ParseQuery() error = %v", err)
+	}
+
+	// Add explicit OR group to force explicit boolean style
+	fg := metric.NewFilterGroupBuilder()
+	fg.Or(ddqb.Filter("region").Equal("us-east-1"))
+	fg.Or(ddqb.Filter("region").Equal("us-west-2"))
+	builder = builder.Filter(fg)
+
+	// Add a negated tag filter; should render as NOT tag:filter when explicit ops are present
+	builder = builder.Filter(ddqb.Filter("tag").NotEqual("filter"))
+
+	out, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Build() error = %v", err)
+	}
+
+	expected := "system.cpu.idle{((region:us-east-1 OR region:us-west-2) AND NOT tag:filter)}"
+	if out != expected {
+		t.Errorf("unexpected query. got=%q want=%q", out, expected)
 	}
 }
